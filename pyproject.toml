@@ -1,0 +1,5 @@
+[project]
+name = "Galatic Society"
+dependencies = [
+    "flask",
+]
