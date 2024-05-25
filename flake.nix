@@ -22,6 +22,7 @@
               python311Packages.flask
 
               nodePackages.pyright
+              vscode-langservers-extracted
             ];
           };
         };
