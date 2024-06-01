@@ -3,8 +3,10 @@ CREATE OR REPLACE PACKAGE PG_Users AS
     e_all_registered EXCEPTION;
     
     PROCEDURE register_users;
+    PROCEDURE log_action(p_userid USERS.ID_USER%TYPE, p_message VARCHAR2);
 END PG_Users;
 /
+
 CREATE OR REPLACE PACKAGE BODY PG_Users AS
     PROCEDURE register_users AS 
         CURSOR c_lideres IS
@@ -29,6 +31,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Users AS
                     INSERT INTO USERS (ID_USER, PASSWORD, ID_LIDER) VALUES(v_user, v_user, v_lider);
                     COMMIT;
                     v_count := v_count + 1;
+                    log_action(v_user, 'User registered');
                 END LOOP;
             END LOOP;
             CLOSE c_lideres;
@@ -36,7 +39,17 @@ CREATE OR REPLACE PACKAGE BODY PG_Users AS
             END IF;
             
         EXCEPTION
-            WHEN e_all_registered THEN RAISE_APPLICATION_ERROR(-20001, 'Todos os lideres ja est�o cadastrados');
+            WHEN e_all_registered THEN 
+                log_action('SYSTEM', 'All leaders are already registered');
+                RAISE_APPLICATION_ERROR(-20001, 'Todos os líderes já estão cadastrados');
     END register_users;
+    
+    PROCEDURE log_action(p_userid USERS.ID_USER%TYPE, p_message VARCHAR2) IS
+    BEGIN
+        INSERT INTO LOG_TABLE (USERID, TIMESTAMP, MESSAGE) VALUES (p_userid, SYSTIMESTAMP, p_message);
+        COMMIT;
+    END log_action;
 END PG_Users;
+/
+
 -- DROP PACKAGE PG_Users;
