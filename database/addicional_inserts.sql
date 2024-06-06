@@ -1001,6 +1001,7 @@ BEGIN
     INSERT INTO LIDER VALUES('510.103.278-89', 'Epsilon Secundu', 'CIENTISTA ', 'Tenetur a quas.', 'Odio enim modi');
     INSERT INTO LIDER VALUES('929.371.120-31', 'Zeta Septimus', 'COMANDANTE', 'Ea aperiam.', 'Atque quia');
     INSERT INTO LIDER VALUES('735.167.956-31', 'Iota Quartus', 'COMANDANTE', 'In asperiores.', 'Quas totam a');
+SAVEPOINT last_success;
     INSERT INTO LIDER VALUES('158.456.667-87', 'Epsilon Quintus', 'COMANDANTE', 'Delectus minus.', 'Odit harum et');
     INSERT INTO LIDER VALUES('383.682.598-47', 'Eta Septimus', 'COMANDANTE', 'Dolorem soluta.', 'Sed qui ut');
     INSERT INTO LIDER VALUES('276.816.855-22', 'Theta Nonus', 'COMANDANTE', 'Officiis error.', 'In quis est');
@@ -2002,9 +2003,11 @@ BEGIN
     INSERT INTO LIDER VALUES('428.210.631-74', 'Gamma Prime', 'COMANDANTE', 'Eius et earum.', 'Nobis nisi at');
     INSERT INTO LIDER VALUES('481.242.611-78', 'Kappa Tertius', 'OFICIAL   ', 'Hic odit in.', 'Non quo quia');
     COMMIT;
+
 EXCEPTION
     WHEN OTHERS THEN
         BEGIN
-            ROLLBACK;
+            ROLLBACK TO last_success;
+            COMMIT;
         END;
 END;
