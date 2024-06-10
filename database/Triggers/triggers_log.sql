@@ -30,7 +30,7 @@ CREATE OR REPLACE TRIGGER TG_Log_Faccao
         WHEN OTHERS THEN
             RAISE_APPLICATION_ERROR(-20002, 'Erro no registro de log na tabela ' || v_table || CHR(10) || SQLERRM);
 END TG_Log_Faccao;
-
+/
 
 /* Trigger to register log on Nacao */
 CREATE OR REPLACE TRIGGER TG_Log_Nacao
@@ -58,7 +58,7 @@ CREATE OR REPLACE TRIGGER TG_Log_Nacao
         WHEN OTHERS THEN
             RAISE_APPLICATION_ERROR(-20002, 'Erro no registro de log na tabela ' || v_table || CHR(10) || SQLERRM);
 END TG_Log_Nacao;
-
+/
 
 /* Trigger to register log on Estrela */
 CREATE OR REPLACE TRIGGER TG_Log_Estrela
@@ -86,7 +86,7 @@ CREATE OR REPLACE TRIGGER TG_Log_Estrela
         WHEN OTHERS THEN
             RAISE_APPLICATION_ERROR(-20002, 'Erro no registro de log na tabela ' || v_table || CHR(10) || SQLERRM);
 END TG_Log_Estrela;
-
+/
 
 /* Trigger to register log on Planeta */
 CREATE OR REPLACE TRIGGER TG_Log_Planeta
@@ -114,7 +114,7 @@ CREATE OR REPLACE TRIGGER TG_Log_Planeta
         WHEN OTHERS THEN
             RAISE_APPLICATION_ERROR(-20002, 'Erro no registro de log na tabela ' || v_table || CHR(10) || SQLERRM);
 END TG_Log_Planeta;
-
+/
 
 /* Trigger to register log on Sistema */
 CREATE OR REPLACE TRIGGER TG_Log_Sistema
@@ -142,3 +142,4 @@ CREATE OR REPLACE TRIGGER TG_Log_Sistema
         WHEN OTHERS THEN
             RAISE_APPLICATION_ERROR(-20002, 'Erro no registro de log na tabela ' || v_table || CHR(10) || SQLERRM);
 END TG_Log_Sistema;
+/
