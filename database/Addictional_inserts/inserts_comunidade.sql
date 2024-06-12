@@ -1,3 +1,5 @@
+/* Insertion: 500 tuples into the Comunidade Table */
+
 INSERT INTO COMUNIDADE (ESPECIE, NOME, QTD_HABITANTES) VALUES ('Iure sit id', 'Alpha', 5863);
 INSERT INTO COMUNIDADE (ESPECIE, NOME, QTD_HABITANTES) VALUES ('Quo dolorem a', 'Beta', 3617);
 INSERT INTO COMUNIDADE (ESPECIE, NOME, QTD_HABITANTES) VALUES ('Hic ipsum ut', 'Gamma', 4930);
