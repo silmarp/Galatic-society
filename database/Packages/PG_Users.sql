@@ -44,7 +44,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Users AS
             
         EXCEPTION
             WHEN e_all_registered THEN 
-                RAISE_APPLICATION_ERROR(-20001, 'Todos os lideres ja estao cadastrados');
+                RAISE_APPLICATION_ERROR(-20100, 'Todos os lideres ja estao cadastrados');
     END register_users;
     
     PROCEDURE set_user_id (p_user_id USERS.ID_USER%TYPE) IS
