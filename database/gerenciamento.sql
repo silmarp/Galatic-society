@@ -238,14 +238,25 @@ begin
     end;
 end;
 
---- Dado a nossa interpretação do item 1.b, implementamos para que todas as tuplas com a faccao escolhida seja removida
-
---- Teste 1:
---- Erro ao executar a procedure: ORA-20005: Erro ao remover facção nome_da_faccao da tabela NacaoFacao.
---- Teste 2:
---- Facção Faccao 1 removida da tabela NacaoFacao com sucesso.
-
+-- ****** Precisa depois ajustar certinho as permissoes para oficiais
 -- Oficial
+-- Conceder permissão de seleção (visualização) para todas as visualizações aos oficiais
+-- criar papel
+CREATE ROLE OFICIAL_ROLE;
+
+GRANT SELECT ON V_FEDERACOES_NACOES TO OFICIAL;
+GRANT SELECT ON V_NACOES_FACCOES TO OFICIAL;
+GRANT SELECT ON V_LIDERES TO OFICIAL;
+GRANT SELECT ON V_ESPECIES_PLANETAS TO OFICIAL;
+GRANT SELECT ON V_PLANETAS TO OFICIAL;
+GRANT SELECT ON V_ESTRELAS_SISTEMAS TO OFICIAL;
+GRANT SELECT ON V_COMUNIDADES TO OFICIAL;
+GRANT SELECT ON V_HABITACOES TO OFICIAL;
+GRANT SELECT ON V_DOMINANCIAS TO OFICIAL;
+
+-- Associar ao papel
+GRANT OFICIAL_ROLE TO OFICIAL;
+
 
 --  Comandante
 
@@ -253,3 +264,16 @@ end;
 -- b)
 
 -- Cientista
+-- *** Precisa Adicionar certinho depois os centistas 
+-- Criação de um papel (role) para os cientistas
+CREATE ROLE CIENTISTA_ROLE;
+
+-- Conceder permissões de execução das procedures aos cientistas
+GRANT EXECUTE ON CREATE_ESTRELA TO CIENTISTA_ROLE;
+GRANT EXECUTE ON READ_ESTRELA TO CIENTISTA_ROLE;
+GRANT EXECUTE ON UPDATE_ESTRELA TO CIENTISTA_ROLE;
+GRANT EXECUTE ON DELETE_ESTRELA TO CIENTISTA_ROLE;
+
+-- Associar cientistas ao papel criado
+GRANT CIENTISTA_ROLE TO CIENTISTA;
+
