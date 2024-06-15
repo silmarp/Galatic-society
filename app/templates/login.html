@@ -5,29 +5,47 @@
 {% endblock %}
 
 {% block content %}
-  <h1>Faça o login</h1>
-  <br/>
+
+<h1>Faça o login</h1>
+<br/>
+<div class="form-container">
   <form method="POST">
+
     {{ form.hidden_tag() }}
 
-    {{ form.username.label(
-      class="form-label"
-    )}}
-    {{ form.username(
-      class="form-control"
-    ) }}
+    <div class="mb-3">
+      {{ form.username.label(
+        class="form-label"
+      )}}
+      
+      {{ form.username(
+        class="form-control"
+      ) }}
 
-    {{ form.password.label(
-      class="form-label"
-    ) }}
-    {{ form.password(
-      class="form-control"
-    ) }}
-    <br/>
+    </div>
+    <div class="mb-3">
+      {{ form.password.label(
+        class="form-label"
+      ) }}
+
+      {{ form.password(
+        class="form-control"
+      ) }}
+    </div>
 
     {{ form.submit(
       class="btn btn-primary"
     ) }}
+
+    {% if error %}
+      <div class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
+    {% endif %}
+
   </form>
+
+</div>
+
 
 {% endblock %}
