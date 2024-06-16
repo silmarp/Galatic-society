@@ -53,3 +53,9 @@ footer {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 10px;
 }
+
+.logout-btn {
+  margin-top: 2vh;
+  display: flex;
+  justify-content: center;
+}

@@ -17,27 +17,27 @@
     <tbody>
       <tr>
         <th scope="row">CPI</th>
-        <td>{{user['cpi']}}</td>
+        <td>{{userSession['cpi']}}</td>
       </tr>
       <tr>
         <th scope="row">Nome</th>
-        <td>{{user['name']}}</td>
+        <td>{{userSession['name']}}</td>
       </tr>
       <tr>
         <th scope="row">Cargo</th>
-        <td colspan="2">{{user['position']}}</td>
+        <td colspan="2">{{userSession['position']}}</td>
       </tr>
       <tr>
         <th scope="row">Nação</th>
-        <td colspan="2">{{user['nation']}}</td>
+        <td colspan="2">{{userSession['nation']}}</td>
       </tr>
       <tr>
         <th scope="row">Facção</th>
-        <td colspan="2">{{user['faction']}}</td>
+        <td colspan="2">{{userSession['faction']}}</td>
       </tr>
       <tr>
         <th scope="row">Espécie</th>
-        <td colspan="2">{{user['species']}}</td>
+        <td colspan="2">{{userSession['species']}}</td>
       </tr>
     </tbody>
   </table>
@@ -160,9 +160,6 @@
         </form>
       </div>
     </div>
-
-      <!-- Incluir propria nacao em uma federacao existente -->
-  <!-- criar nova federacao com a propria nacao -->
   
     <div class="card" style="width: 18rem;">
       <div class="card-body">

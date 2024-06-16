@@ -5,7 +5,7 @@ from cx_Oracle import connect
 
 from app.forms.updateFactionName import UpdateFactionName
 from app.forms.updateLeaderFromFaction import UpdateLeaderFromFaction
-from app.forms.loginForm import LoginForm
+from app.forms.login import Login
 from app.forms.addCommunityToFaction import AddCommunityToFaction
 from app.forms.addFederationToNation import AddFederationToNation
 from app.forms.addDominationToNation import AddDominationToNation
@@ -38,14 +38,13 @@ def verify_login(id, password):
 
     return user is not None
 
-@app.route('/')
-def index():
-    return render_template("index.html")
-
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
+    form = Login()
     error = None
+
+    if userSession['logged']:
+        return redirect(url_for('overview'))
 
     if form.validate_on_submit():
         id = form.id.data
@@ -68,13 +67,28 @@ def login():
             userSession['nation'] = 'Nacao do Lider'
             userSession['species'] = 'Especie do Lider'
 
-            return redirect(url_for('index'))
+            return redirect(url_for('login'))
         else:
             form.id.data = ''
             form.password.data = ''
             error = 'ID ou senha inválidos'
 
-    return render_template('login.html', form=form, error=error)
+    return render_template('login.html',
+                           form=form,
+                           error=error,
+                           userSession=userSession)
+
+@app.route('/logout')
+def logout():
+    userSession['logged'] = False
+    userSession['cpi'] = None
+    userSession['name'] = None
+    userSession['position'] = None
+    userSession['nation'] = None
+    userSession['faction'] = None
+    userSession['species'] = None
+
+    return redirect(url_for('login'))
 
 @app.route('/overview', methods=['GET', 'POST'])
 def overview():
@@ -117,13 +131,13 @@ def overview():
         return redirect(url_for('overview'))
 
     return render_template('overview.html',
-                          user=userSession,
+                          userSession=userSession,
                           updateFactionNameForm=updateFactionNameForm,
                           updateLeaderFromFactionForm=updateLeaderFromFactionForm,
                           addCommunityToFactionForm=addCommunityToFactionForm,
                           addFederationToNationForm=addFederationToNationForm,
                           addDominationToNationForm=addDominationToNationForm,
-                          removeNationFromFederationForm=removeNationFromFederationForm,)
+                          removeNationFromFederationForm=removeNationFromFederationForm)
 
 # Invalid URL
 @app.errorhandler(404)
