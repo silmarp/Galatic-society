@@ -7,6 +7,9 @@ from app.forms.updateFactionName import UpdateFactionName
 from app.forms.updateLeaderFromFaction import UpdateLeaderFromFaction
 from app.forms.loginForm import LoginForm
 from app.forms.addCommunityToFaction import AddCommunityToFaction
+from app.forms.addFederationToNation import AddFederationToNation
+from app.forms.addDominationToNation import AddDominationToNation
+from app.forms.removeNationFromFederation import RemoveNationFromFederation
 
 app = Flask(__name__)
 
@@ -78,6 +81,9 @@ def overview():
     updateFactionNameForm = UpdateFactionName()
     updateLeaderFromFactionForm = UpdateLeaderFromFaction()
     addCommunityToFactionForm = AddCommunityToFaction()
+    addFederationToNationForm = AddFederationToNation()
+    addDominationToNationForm = AddDominationToNation()
+    removeNationFromFederationForm= RemoveNationFromFederation()
 
     error = None # TODO: disparar um toast com o erro
 
@@ -91,22 +97,33 @@ def overview():
         return redirect(url_for('overview'))
 
     if updateLeaderFromFactionForm.validate_on_submit():
-        # userSession['faction'] = updateFactionNameForm.faction.data
-        flash('Lider alterado com sucesso!')
-
+        flash('Lider da facção alterado com sucesso!')
         return redirect(url_for('overview'))
     
     if addCommunityToFactionForm.validate_on_submit():
         flash('Comunidade credenciada com sucesso!')
         return redirect(url_for('overview'))
     
-
+    if addFederationToNationForm.validate_on_submit():
+        flash('Federação credenciada com sucesso!')
+        return redirect(url_for('overview'))
+    
+    if addDominationToNationForm.validate_on_submit():
+        flash('Dominação adicionada com sucesso!')
+        return redirect(url_for('overview'))
+    
+    if removeNationFromFederationForm.validate_on_submit():
+        flash('Nação removida da federação com sucesso!')
+        return redirect(url_for('overview'))
 
     return render_template('overview.html',
                           user=userSession,
                           updateFactionNameForm=updateFactionNameForm,
                           updateLeaderFromFactionForm=updateLeaderFromFactionForm,
-                          addCommunityToFactionForm=addCommunityToFactionForm)
+                          addCommunityToFactionForm=addCommunityToFactionForm,
+                          addFederationToNationForm=addFederationToNationForm,
+                          addDominationToNationForm=addDominationToNationForm,
+                          removeNationFromFederationForm=removeNationFromFederationForm,)
 
 # Invalid URL
 @app.errorhandler(404)

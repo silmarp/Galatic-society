@@ -126,13 +126,102 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="overview">
+  <h1>Gerir Nação</h1>
+
+  <div class="card-container">
+
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Incluir nação em uma federação</h5>
+        <p class="card-text">Caso a federação nao exista, será criada.</p>
+        <form method="POST">
+          {{ addFederationToNationForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ addFederationToNationForm.federation(
+              class="form-control",
+              placeholder="Nome da federação..."
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ addFederationToNationForm.date.label(
+              class="form-label"
+            )}}
+            {{ addFederationToNationForm.date(
+              class="form-control",
+              placeholder="Novo nome..."
+            ) }}
+          </div>
+          {{ addFederationToNationForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+
+      <!-- Incluir propria nacao em uma federacao existente -->
+  <!-- criar nova federacao com a propria nacao -->
+  
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Excluir nação da federação </h5>
+        <p class="card-text">Ao confirmar, a operação não poderá ser desfeita!</p>
+        <form method="POST">
+          {{ removeNationFromFederationForm.hidden_tag() }}
+          
+          {{ removeNationFromFederationForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+  
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Dominar planeta</h5>
+        <form method="POST">
+          {{ addDominationToNationForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ addDominationToNationForm.planet(
+              class="form-control",
+              placeholder="Nome do planeta..."
+            ) }}
+          </div>
+
+          <div class="mb-3">
+            {{ addDominationToNationForm.start_date.label(
+              class="form-label"
+            )}}
+            
+            {{ addDominationToNationForm.start_date(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ addDominationToNationForm.end_date.label(
+              class="form-label"
+            )}}
+
+            {{ addDominationToNationForm.end_date(
+              class="form-control"
+            ) }}
+          </div>
+          {{ addDominationToNationForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
 
 </div>
 
 
-
 <div class="overview">
   <h1>Informações das estrelas</h1>
+  <!-- Gerenciar (CRUD) estrelas -->
+
 </div>
 
 <div class="overview">
