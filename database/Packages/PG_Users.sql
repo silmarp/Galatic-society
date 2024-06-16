@@ -1,13 +1,19 @@
+DROP PACKAGE PG_Users;
+
 /* Package Users */
 CREATE OR REPLACE PACKAGE PG_Users AS
     e_all_registered EXCEPTION;
     
     PROCEDURE register_users;
-    PROCEDURE log_action(p_userid USERS.ID_USER%TYPE, p_message VARCHAR2);
+    FUNCTION get_user_info (p_user_id USERS.ID_USER%TYPE) RETURN Lider%ROWTYPE;
+    PROCEDURE set_user_id (p_user_id USERS.ID_USER%TYPE);
+    FUNCTION get_user_id RETURN USERS.ID_USER%TYPE;
 END PG_Users;
 /
 
 CREATE OR REPLACE PACKAGE BODY PG_Users AS
+    g_user_id USERS.ID_USER%TYPE;
+
     PROCEDURE register_users AS 
         CURSOR c_lideres IS
             SELECT L.CPI
@@ -31,7 +37,6 @@ CREATE OR REPLACE PACKAGE BODY PG_Users AS
                     INSERT INTO USERS (ID_USER, PASSWORD, ID_LIDER) VALUES(v_user, v_user, v_lider);
                     COMMIT;
                     v_count := v_count + 1;
-                    log_action(v_user, 'User registered');
                 END LOOP;
             END LOOP;
             CLOSE c_lideres;
@@ -40,16 +45,32 @@ CREATE OR REPLACE PACKAGE BODY PG_Users AS
             
         EXCEPTION
             WHEN e_all_registered THEN 
-                log_action('SYSTEM', 'All leaders are already registered');
-                RAISE_APPLICATION_ERROR(-20001, 'Todos os líderes já estão cadastrados');
+                RAISE_APPLICATION_ERROR(-20101, 'Todos os lideres ja estao cadastrados');
+            WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20100, 'Erro em register_users ' || CHR(10) || SQLERRM);
     END register_users;
     
-    PROCEDURE log_action(p_userid USERS.ID_USER%TYPE, p_message VARCHAR2) IS
-    BEGIN
-        INSERT INTO LOG_TABLE (USERID, TIMESTAMP, MESSAGE) VALUES (p_userid, SYSTIMESTAMP, p_message);
-        COMMIT;
-    END log_action;
+    FUNCTION get_user_info (p_user_id USERS.ID_USER%TYPE) RETURN Lider%ROWTYPE IS
+        v_id_lider USERS.ID_LIDER%TYPE;
+        v_lider Lider%ROWTYPE;
+        BEGIN
+            SELECT U.ID_LIDER INTO v_id_lider FROM USERS U WHERE U.ID_USER = p_user_id;
+            SELECT * INTO v_lider FROM LIDER L WHERE L.CPI = v_id_lider;
+            RETURN v_lider;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                RAISE_APPLICATION_ERROR(-20101, 'Usuario nao encontrado'); 
+            WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20100, 'Erro em get_user_info' || CHR(10) || SQLERRM);
+    END get_user_info;
+    
+    PROCEDURE set_user_id (p_user_id USERS.ID_USER%TYPE) IS
+        BEGIN
+            g_user_id := p_user_id;
+    END set_user_id;
+    
+    FUNCTION get_user_id RETURN USERS.ID_USER%TYPE IS
+        BEGIN
+            RETURN g_user_id;
+    END get_user_id;
 END PG_Users;
-/
-
--- DROP PACKAGE PG_Users;
