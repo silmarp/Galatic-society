@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Overview
+{% endblock %}
+
+{% block content %}
+
+<h1>Overview</h1>
+<br/>
+
+<div class="overview-infos">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">CPI</th>
+        <td>{{user['cpi']}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Nome</th>
+        <td>{{user['name']}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Cargo</th>
+        <td colspan="2">{{user['position']}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Nação</th>
+        <td colspan="2">{{user['nation']}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Espécie</th>
+        <td colspan="2">{{user['species']}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

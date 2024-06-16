@@ -28,3 +28,10 @@ footer {
   align-items: center;
 }
 
+.overview-infos {
+  padding-left: 10%;
+  padding-right: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

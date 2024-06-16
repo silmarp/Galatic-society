@@ -11,16 +11,25 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "mysecretkey"
 app.config['ORACLE_DB_URI'] = 'oracle+cx_oracle://system:oracle@localhost:1521/xe'
 
+userSession = {
+    'logged': False,
+    'cpi': None,
+    'name': None,
+    'position': None,
+    'nation': None,
+    'species': None
+}
+
 class LoginForm(FlaskForm):
-    username = StringField('Username:', validators=[DataRequired()])
+    id = StringField('ID:', validators=[DataRequired()])
     password = PasswordField('Password:', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-def verify_login(username, password):
+def verify_login(id, password):
     conn = connect(app.config['ORACLE_DB_URI'])
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM users WHERE username = :username AND password = :password", username=username, password=password)
+    cursor.execute("SELECT * FROM users WHERE id_user = :id AND password = :password", id=id, password=password)
     user = cursor.fetchone()
 
     cursor.close()
@@ -38,7 +47,7 @@ def login():
     error = None
 
     if form.validate_on_submit():
-        username = form.username.data
+        id = form.id.data
         password = form.password.data
 
         # if verify_login(username, password):
@@ -48,15 +57,27 @@ def login():
         #     # imprimir erro
         #     flash(error)
 
-        if username == 'admin' and password == 'admin':
+        if id == 'admin' and password == 'admin':
             error = None
+
+            userSession['logged'] = True
+            userSession['cpi'] = '00001'
+            userSession['name'] = 'NOME_DO_LIDER'
+            userSession['position'] = 'Cargo do Lider'
+            userSession['nation'] = 'Nacao do Lider'
+            userSession['species'] = 'Especie do Lider'
+
             return redirect(url_for('index'))
         else:
-            form.username.data = ''
+            form.id.data = ''
             form.password.data = ''
-            error = 'Usuário ou senha inválidos'
+            error = 'ID ou senha inválidos'
 
     return render_template('login.html', form=form, error=error)
+
+@app.route('/overview')
+def overview():
+    return render_template('overview.html', user=userSession)
 
 # Invalid URL
 @app.errorhandler(404)
