@@ -6,9 +6,6 @@
 
 {% block content %}
 
-<h1>Overview</h1>
-<br/>
-
 <div class="overview-infos">
   <table class="table table-striped">
     <thead>
@@ -35,11 +32,116 @@
         <td colspan="2">{{user['nation']}}</td>
       </tr>
       <tr>
+        <th scope="row">Facção</th>
+        <td colspan="2">{{user['faction']}}</td>
+      </tr>
+      <tr>
         <th scope="row">Espécie</th>
         <td colspan="2">{{user['species']}}</td>
       </tr>
     </tbody>
   </table>
 </div>
+
+<div class="overview">
+  <h1>Gerir Facção</h1>
+
+  <div class="card-container">
+
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Alterar nome da Facção</h5>
+        <form method="POST">
+          {{ updateFactionNameForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ updateFactionNameForm.faction(
+              class="form-control",
+              placeholder="Novo nome..."
+            ) }}
+          </div>
+          {{ updateFactionNameForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+  
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Indicar novo líder</h5>
+        <form method="POST">
+          {{ updateLeaderFromFactionForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ updateLeaderFromFactionForm.leader(
+              class="form-control",
+              placeholder="Novo líder..."
+            ) }}
+          </div>
+          {{ updateLeaderFromFactionForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+  
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Credenciar comunidade</h5>
+        <form method="POST">
+          {{ addCommunityToFactionForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ addCommunityToFactionForm.species(
+              class="form-control",
+              placeholder="Nome da espécie..."
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ addCommunityToFactionForm.community(
+              class="form-control",
+              placeholder="Nome da comunidade..."
+            ) }}
+          </div>
+          {{ addCommunityToFactionForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Remover nação</h5>
+        <form method="POST">
+          {{ addCommunityToFactionForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ addCommunityToFactionForm.species(
+              class="form-control",
+              placeholder="Nome da nação..."
+            ) }}
+          </div>
+          {{ addCommunityToFactionForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<div class="overview">
+  <h1>Informações das estrelas</h1>
+</div>
+
+<div class="overview">
+  <h1>Relatório</h1>
+</div>
+
+
+<!-- <div class="overview-actions">
+  <a href="" class="btn btn-primary">Editar</a>
+</div> -->
 
 {% endblock %}

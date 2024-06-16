@@ -2,9 +2,11 @@ from flask import Flask, flash
 from flask import request, redirect, url_for
 from flask import render_template
 from cx_Oracle import connect
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired
+
+from app.forms.updateFactionName import UpdateFactionName
+from app.forms.updateLeaderFromFaction import UpdateLeaderFromFaction
+from app.forms.loginForm import LoginForm
+from app.forms.addCommunityToFaction import AddCommunityToFaction
 
 app = Flask(__name__)
 
@@ -13,17 +15,13 @@ app.config['ORACLE_DB_URI'] = 'oracle+cx_oracle://system:oracle@localhost:1521/x
 
 userSession = {
     'logged': False,
-    'cpi': None,
+    'cpi': None, # cpi é o id tirando U_ do começo
     'name': None,
     'position': None,
     'nation': None,
+    'faction': None,
     'species': None
 }
-
-class LoginForm(FlaskForm):
-    id = StringField('ID:', validators=[DataRequired()])
-    password = PasswordField('Password:', validators=[DataRequired()])
-    submit = SubmitField('Submit')
 
 def verify_login(id, password):
     conn = connect(app.config['ORACLE_DB_URI'])
@@ -75,9 +73,40 @@ def login():
 
     return render_template('login.html', form=form, error=error)
 
-@app.route('/overview')
+@app.route('/overview', methods=['GET', 'POST'])
 def overview():
-    return render_template('overview.html', user=userSession)
+    updateFactionNameForm = UpdateFactionName()
+    updateLeaderFromFactionForm = UpdateLeaderFromFaction()
+    addCommunityToFactionForm = AddCommunityToFaction()
+
+    error = None # TODO: disparar um toast com o erro
+
+    if not userSession['logged']:
+        return redirect(url_for('login'))
+    
+    # todo: fazer com try catch, verificando o erro
+    if updateFactionNameForm.validate_on_submit():
+        flash('Nome da facção alterado com sucesso!')
+        userSession['faction'] = updateFactionNameForm.faction.data
+        return redirect(url_for('overview'))
+
+    if updateLeaderFromFactionForm.validate_on_submit():
+        # userSession['faction'] = updateFactionNameForm.faction.data
+        flash('Lider alterado com sucesso!')
+
+        return redirect(url_for('overview'))
+    
+    if addCommunityToFactionForm.validate_on_submit():
+        flash('Comunidade credenciada com sucesso!')
+        return redirect(url_for('overview'))
+    
+
+
+    return render_template('overview.html',
+                          user=userSession,
+                          updateFactionNameForm=updateFactionNameForm,
+                          updateLeaderFromFactionForm=updateLeaderFromFactionForm,
+                          addCommunityToFactionForm=addCommunityToFactionForm)
 
 # Invalid URL
 @app.errorhandler(404)
