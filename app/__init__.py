@@ -10,6 +10,8 @@ from app.forms.addCommunityToFaction import AddCommunityToFaction
 from app.forms.addFederationToNation import AddFederationToNation
 from app.forms.addDominationToNation import AddDominationToNation
 from app.forms.removeNationFromFederation import RemoveNationFromFederation
+from app.forms.createStar import CreateStar
+from app.forms.deleteStar import DeleteStar
 
 app = Flask(__name__)
 
@@ -98,6 +100,8 @@ def overview():
     addFederationToNationForm = AddFederationToNation()
     addDominationToNationForm = AddDominationToNation()
     removeNationFromFederationForm= RemoveNationFromFederation()
+    createStarForm = CreateStar()
+    deleteStarForm = DeleteStar()
 
     error = None # TODO: disparar um toast com o erro
 
@@ -129,6 +133,14 @@ def overview():
     if removeNationFromFederationForm.validate_on_submit():
         flash('Nação removida da federação com sucesso!')
         return redirect(url_for('overview'))
+    
+    if createStarForm.validate_on_submit():
+        flash('Estrela adicionada com sucesso!')
+        return redirect(url_for('overview'))
+    
+    if deleteStarForm.validate_on_submit():
+        flash('Estrela removida com sucesso!')
+        return redirect(url_for('overview'))
 
     return render_template('overview.html',
                           userSession=userSession,
@@ -137,7 +149,9 @@ def overview():
                           addCommunityToFactionForm=addCommunityToFactionForm,
                           addFederationToNationForm=addFederationToNationForm,
                           addDominationToNationForm=addDominationToNationForm,
-                          removeNationFromFederationForm=removeNationFromFederationForm)
+                          removeNationFromFederationForm=removeNationFromFederationForm,
+                          createStarForm=createStarForm,
+                          deleteStarForm=deleteStarForm)
 
 # Invalid URL
 @app.errorhandler(404)

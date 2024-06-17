@@ -48,7 +48,7 @@
 
   <div class="card-container">
 
-    <div class="card" style="width: 18rem;">
+    <div class="card" style="width: 18rem; height: 20vh;">
       <div class="card-body">
         <h5 class="card-title">Alterar nome da Facção</h5>
         <form method="POST">
@@ -66,7 +66,7 @@
       </div>
     </div>
   
-    <div class="card" style="width: 18rem;">
+    <div class="card" style="width: 18rem; height: 20vh;">
       <div class="card-body">
         <h5 class="card-title">Indicar novo líder</h5>
         <form method="POST">
@@ -108,7 +108,7 @@
       </div>
     </div>
 
-    <div class="card" style="width: 18rem;">
+    <div class="card" style="width: 18rem; height: 20vh;">
       <div class="card-body">
         <h5 class="card-title">Remover nação</h5>
         <form method="POST">
@@ -161,7 +161,7 @@
       </div>
     </div>
   
-    <div class="card" style="width: 18rem;">
+    <div class="card" style="width: 18rem; height: 23vh;">
       <div class="card-body">
         <h5 class="card-title">Excluir nação da federação </h5>
         <p class="card-text">Ao confirmar, a operação não poderá ser desfeita!</p>
@@ -216,8 +216,105 @@
 
 
 <div class="overview">
-  <h1>Informações das estrelas</h1>
-  <!-- Gerenciar (CRUD) estrelas -->
+  <h1>Gerenciar estrelas</h1>
+  <div class="card-container">
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Adicionar estrela</h5>
+        <form method="POST">
+          {{ createStarForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ createStarForm.star_id.label(
+              class="form-label"
+            )}}
+            {{ createStarForm.star_id(
+              class="form-control",
+              placeholder="Id da estrela..."
+            ) }}
+          </div>
+
+          <div class="mb-3">
+            {{ createStarForm.name.label(
+              class="form-label"
+            )}}
+            
+            {{ createStarForm.name(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ createStarForm.classification.label(
+              class="form-label"
+            )}}
+
+            {{ createStarForm.classification(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ createStarForm.weight.label(
+              class="form-label"
+            )}}
+
+            {{ createStarForm.weight(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ createStarForm.X.label(
+              class="form-label"
+            )}}
+
+            {{ createStarForm.X(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ createStarForm.Y.label(
+              class="form-label"
+            )}}
+
+            {{ createStarForm.Y(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ createStarForm.Z.label(
+              class="form-label"
+            )}}
+
+            {{ createStarForm.Z(
+              class="form-control"
+            ) }}
+          </div>
+          {{ createStarForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+
+    <div class="card" style="width: 18rem; height: 23vh;">
+      <div class="card-body">
+        <h5 class="card-title">Remover estrela</h5>
+        <form method="POST">
+          {{ deleteStarForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ deleteStarForm.star_id.label(
+              class="form-label"
+            )}}
+            {{ deleteStarForm.star_id(
+              class="form-control",
+              placeholder="Id da estrela..."
+            ) }}
+          </div>
+          {{ deleteStarForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+  </div>
 
 </div>
 
