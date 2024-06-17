@@ -18,72 +18,52 @@ from app.migrations.database import *
 load_dotenv()
 
 app = Flask(__name__)
-
 app.config['SECRET_KEY'] = "mysecretkey"
 
 userSession = {
-    'logged': False,
-    'cpi': None, # cpi é o id tirando U_ do começo
-    'name': None,
-    'position': None,
-    'nation': None,
-    'faction': None,
-    'species': None
+  'logged': False,
+  'cpi': None, # cpi é o id tirando U_ do começo
+  'name': None,
+  'position': None,
+  'nation': None,
+  'faction': None,
+  'species': None
 }
-
-# def verify_login(id, password):
-#     conn = connect(app.config['ORACLE_DB_URI'])
-#     cursor = conn.cursor()
-
-#     cursor.execute("SELECT * FROM users WHERE id_user = :id AND password = :password", id=id, password=password)
-#     user = cursor.fetchone()
-
-#     cursor.close()
-#     conn.close()
-
-#     return user is not None
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    form = Login()
-    error = None
+  form = Login()
+  error = None
 
-    if userSession['logged']:
-        return redirect(url_for('overview'))
+  if userSession['logged']:
+    return redirect(url_for('overview'))
 
-    if form.validate_on_submit():
-        id = form.id.data
-        password = form.password.data
+  if form.validate_on_submit():
+    id = form.id.data
+    password = form.password.data
 
-        verifyLogin(id, password)
+    response = verifyLogin(id, password)
 
-        # if verify_login(username, password):
-        #     return redirect(url_for('index'))
-        # else:
-        #     error = "Usuário ou senha inválidos"
-        #     # imprimir erro
-        #     flash(error)
+    if response is not None:
+      error = None
 
-        if id == 'admin' and password == 'admin':
-            error = None
+      userSession['logged'] = True
+      userSession['cpi'] = response['CPI']
+      userSession['name'] = response['NOME']
+      userSession['position'] = response['CARGO']
+      userSession['nation'] = response['NACAO']
+      userSession['species'] = response['ESPECIE']
 
-            userSession['logged'] = True
-            userSession['cpi'] = '00001'
-            userSession['name'] = 'NOME_DO_LIDER'
-            userSession['position'] = 'Cargo do Lider'
-            userSession['nation'] = 'Nacao do Lider'
-            userSession['species'] = 'Especie do Lider'
+      return redirect(url_for('login'))
+    else:
+      form.id.data = ''
+      form.password.data = ''
+      error = 'ID ou senha inválidos'
 
-            return redirect(url_for('login'))
-        else:
-            form.id.data = ''
-            form.password.data = ''
-            error = 'ID ou senha inválidos'
-
-    return render_template('login.html',
-                           form=form,
-                           error=error,
-                           userSession=userSession)
+  return render_template('login.html',
+                          form=form,
+                          error=error,
+                          userSession=userSession)
 
 @app.route('/logout')
 def logout():
@@ -161,7 +141,7 @@ def overview():
 # Invalid URL
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'), 404
+    return render_template('404.html', userSession=userSession), 404
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
