@@ -16,8 +16,7 @@ from app.forms.deleteStar import DeleteStar
 from app.migrations.database import *
 from app.migrations.controllers.login import verifyLogin
 from app.migrations.controllers.changeFactionName import changeFactionName
-
-
+from app.migrations.controllers.changeFacLeader import changeFacLeader
 
 # deu pau, consertar
 from app.migrations.controllers.addDomination import addDomination
@@ -121,7 +120,17 @@ def overview():
         return redirect(url_for('overview'))
 
     if updateLeaderFromFactionForm.validate_on_submit():
-        flash('Lider da facção alterado com sucesso!')
+        ok = changeFacLeader(
+          userSession['user'],
+          userSession['faction'],
+          updateLeaderFromFactionForm.leader.data
+        )
+
+        if ok:
+          flash('Lider alterado com sucesso')
+          userSession['faction'] = "Você não é líder de facção"
+        else:
+          flash('Erro ao alterar lider da facção!')
         return redirect(url_for('overview'))
     
     if addCommunityToFactionForm.validate_on_submit():
