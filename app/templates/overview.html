@@ -43,6 +43,8 @@
   </table>
 </div>
 
+{% if userSession['faction'] != 'Você não é líder de facção' %}
+
 <div class="overview">
   <h1>Gerir Facção</h1>
 
@@ -112,14 +114,14 @@
       <div class="card-body">
         <h5 class="card-title">Remover nação</h5>
         <form method="POST">
-          {{ addCommunityToFactionForm.hidden_tag() }}
+          {{ removeNationFromFactionForm.hidden_tag() }}
           <div class="mb-3">
-            {{ addCommunityToFactionForm.species(
+            {{ removeNationFromFactionForm.nation(
               class="form-control",
               placeholder="Nome da nação..."
             ) }}
           </div>
-          {{ addCommunityToFactionForm.submit(
+          {{ removeNationFromFactionForm.submit(
             class="btn btn-primary"
           ) }}
         </form>
@@ -127,6 +129,8 @@
     </div>
   </div>
 </div>
+
+{% endif %}
 
 <div class="overview">
   <h1>Gerir Nação</h1>

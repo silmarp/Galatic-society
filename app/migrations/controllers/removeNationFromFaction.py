@@ -1,0 +1,17 @@
+from app.migrations.database import *
+
+def removeNationFromFaction(user, nation):
+  db = DbConnection()
+
+  try:
+    db.getCursor().callproc('PG_Lider.remover_faccao_da_nacao', [user, nation])
+
+    db.closeConnection()
+
+    return True
+
+  except oracledb.DatabaseError as e:
+    flash(f"Erro ao remover nação: {e.args[0].message}")
+    print(f"Erro ao remover nação: {e.args[0].message}")
+
+    return False

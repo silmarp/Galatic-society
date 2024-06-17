@@ -7,6 +7,7 @@ from app.forms.updateFactionName import UpdateFactionName
 from app.forms.updateLeaderFromFaction import UpdateLeaderFromFaction
 from app.forms.login import Login
 from app.forms.addCommunityToFaction import AddCommunityToFaction
+from app.forms.removeNationFromFaction import RemoveNationFromFaction
 from app.forms.addFederationToNation import AddFederationToNation
 from app.forms.addDominationToNation import AddDominationToNation
 from app.forms.removeNationFromFederation import RemoveNationFromFederation
@@ -17,6 +18,11 @@ from app.migrations.database import *
 from app.migrations.controllers.login import verifyLogin
 from app.migrations.controllers.changeFactionName import changeFactionName
 from app.migrations.controllers.changeFacLeader import changeFacLeader
+from app.migrations.controllers.deleteNationFromFederation import deleteNationFromFederation
+
+# falta testar
+from app.migrations.controllers.addCommunityToFaction import addCommunityToFaction
+from app.migrations.controllers.removeNationFromFaction import removeNationFromFaction
 
 # deu pau, consertar
 from app.migrations.controllers.addDomination import addDomination
@@ -92,6 +98,7 @@ def overview():
     updateFactionNameForm = UpdateFactionName()
     updateLeaderFromFactionForm = UpdateLeaderFromFaction()
     addCommunityToFactionForm = AddCommunityToFaction()
+    removeNationFromFactionForm = RemoveNationFromFaction()
     addFederationToNationForm = AddFederationToNation()
     addDominationToNationForm = AddDominationToNation()
     removeNationFromFederationForm= RemoveNationFromFederation()
@@ -134,9 +141,33 @@ def overview():
         return redirect(url_for('overview'))
     
     if addCommunityToFactionForm.validate_on_submit():
-        flash('Comunidade credenciada com sucesso!')
+        ok = addCommunityToFaction(
+          userSession['user'],
+          userSession['faction'],
+          addCommunityToFactionForm.species.data,
+          addCommunityToFactionForm.community.data
+        )
+
+        if ok:
+          flash('Comunidade adicionada com sucesso!')
+        else:
+          flash('Erro ao adicionar comunidade!')
+
         return redirect(url_for('overview'))
     
+    if removeNationFromFactionForm.validate_on_submit():
+        ok = removeNationFromFaction(
+          userSession['user'],
+          removeNationFromFactionForm.nation.data
+        )
+
+        if ok:
+          flash('Nação removida com sucesso!')
+        else:
+          flash('Erro ao remover nação!')
+
+        return redirect(url_for('overview'))
+
     if addFederationToNationForm.validate_on_submit():
         flash('Federação credenciada com sucesso!')
         return redirect(url_for('overview'))
@@ -155,7 +186,12 @@ def overview():
         return redirect(url_for('overview'))
     
     if removeNationFromFederationForm.validate_on_submit():
-        flash('Nação removida da federação com sucesso!')
+        ok = deleteNationFromFederation(
+           userSession['user']
+        )
+
+        print("FOI REMOVIDO")
+        
         return redirect(url_for('overview'))
     
     if createStarForm.validate_on_submit():
@@ -171,6 +207,7 @@ def overview():
                           updateFactionNameForm=updateFactionNameForm,
                           updateLeaderFromFactionForm=updateLeaderFromFactionForm,
                           addCommunityToFactionForm=addCommunityToFactionForm,
+                          removeNationFromFactionForm=removeNationFromFactionForm,
                           addFederationToNationForm=addFederationToNationForm,
                           addDominationToNationForm=addDominationToNationForm,
                           removeNationFromFederationForm=removeNationFromFederationForm,
