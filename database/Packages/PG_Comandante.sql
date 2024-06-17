@@ -30,6 +30,42 @@ CREATE OR REPLACE PACKAGE PG_Comandante AS
         p_dominancia_data_ini Dominancia.Data_ini%TYPE DEFAULT TO_DATE(SYSDATE, 'dd/mm/yyyy'),
         p_dominancia_data_fim Dominancia.Data_fim%TYPE DEFAULT NULL
     );
+
+    TYPE dominancia_planeta_dominado_rec IS RECORD (
+        nome_planeta VARCHAR2(100),
+        nacao_dominante VARCHAR2(100),
+        data_inicio_dominancia DATE,
+        data_fim_dominancia DATE,
+        quantidade_comunidades NUMBER,
+        especies_presentes VARCHAR2(4000),
+        total_habitantes NUMBER,
+        faccoes_presentes VARCHAR2(4000),
+        faccao_majoritaria VARCHAR2(100)
+    );
+
+    TYPE dominancia_planeta_nao_dominado_rec IS RECORD (
+        nome_planeta VARCHAR2(100),
+        quantidade_comunidades NUMBER,
+        especies_presentes VARCHAR2(4000),
+        total_habitantes NUMBER,
+        faccoes_presentes VARCHAR2(4000),
+        faccao_majoritaria VARCHAR2(100)
+    );
+    
+    TYPE dominancia_planeta_dominado_table IS TABLE OF dominancia_planeta_dominado_rec;
+    TYPE dominancia_planeta_nao_dominado_table IS TABLE OF dominancia_planeta_nao_dominado_rec;
+
+    FUNCTION relatorio_dominancia_planetas (
+        p_user USERS.ID_User%TYPE
+    ) RETURN dominancia_planeta_dominado_table PIPELINED;
+    
+    FUNCTION relatorio_planetas_nao_dominados (
+        p_user USERS.ID_User%TYPE
+    ) RETURN dominancia_planeta_nao_dominado_table PIPELINED;
+
+    FUNCTION relatorio_planetas_dominados (
+        p_user USERS.ID_User%TYPE
+    ) RETURN dominancia_planeta_dominado_table PIPELINED;
 END PG_Comandante;
 /
 
@@ -141,4 +177,129 @@ CREATE OR REPLACE PACKAGE BODY PG_Comandante AS
             WHEN OTHERS THEN
                 RAISE_APPLICATION_ERROR(-20110, 'Erro em insert_dominancia' || CHR(10) || SQLERRM);
     END insert_dominancia;
+    
+    FUNCTION relatorio_dominancia_planetas (
+        p_user USERS.ID_User%TYPE
+    ) RETURN dominancia_planeta_dominado_table PIPELINED
+    AS
+        v_lider Lider%ROWTYPE;
+        v_record dominancia_planeta_dominado_rec;
+        CURSOR c IS
+            SELECT
+                nome_planeta,
+                nacao_dominante,
+                data_inicio_dominancia,
+                data_fim_dominancia,
+                quantidade_comunidades,
+                especies_presentes,
+                total_habitantes,
+                faccoes_presentes,
+                faccao_majoritaria
+            FROM V_DOMINANCIA_PLANETAS;
+            
+        BEGIN
+            v_lider := PG_Users.get_user_info(p_user);
+            IF v_lider.cargo != 'COMANDANTE' THEN RAISE e_not_comandante; END IF;
+            OPEN c;
+            LOOP
+                FETCH c INTO v_record;
+                EXIT WHEN c%NOTFOUND;
+                PIPE ROW(v_record);
+            END LOOP;
+            CLOSE c;
+            RETURN;
+            
+        EXCEPTION
+            WHEN e_not_comandante THEN
+                RAISE_APPLICATION_ERROR(-20111, 'Usuario nao e comandante');
+            WHEN e_atrib_notnull THEN
+                RAISE_APPLICATION_ERROR(-20112, 'Valor obrigatorio nao fornecido');
+            WHEN VALUE_ERROR THEN
+                RAISE_APPLICATION_ERROR(-20113, 'Erro de atribuicao. Verifique os dados fornecidos');
+            WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20110, 'Erro em relatorio_dominancia_planetas' || CHR(10) || SQLERRM);
+    END relatorio_dominancia_planetas;
+
+    FUNCTION relatorio_planetas_dominados (
+        p_user USERS.ID_User%TYPE
+    ) RETURN dominancia_planeta_dominado_table PIPELINED
+    AS
+        v_lider Lider%ROWTYPE;
+        v_record dominancia_planeta_dominado_rec;
+        CURSOR c IS
+            SELECT
+                nome_planeta,
+                nacao_dominante,
+                data_inicio_dominancia,
+                data_fim_dominancia,
+                quantidade_comunidades,
+                especies_presentes,
+                total_habitantes,
+                faccoes_presentes,
+                faccao_majoritaria
+            FROM V_DOMINANCIA_PLANETAS
+            WHERE NACAO_DOMINANTE IS NOT NULL
+                AND DATA_FIM_DOMINANCIA > SYSDATE;
+        BEGIN
+            v_lider := PG_Users.get_user_info(p_user);
+            IF v_lider.cargo != 'COMANDANTE' THEN RAISE e_not_comandante; END IF;
+            OPEN c;
+            LOOP
+                FETCH c INTO v_record;
+                EXIT WHEN c%NOTFOUND;
+                PIPE ROW(v_record);
+            END LOOP;
+            CLOSE c;
+            RETURN;
+            
+        EXCEPTION
+            WHEN e_not_comandante THEN
+                RAISE_APPLICATION_ERROR(-20111, 'Usuario nao e comandante');
+            WHEN e_atrib_notnull THEN
+                RAISE_APPLICATION_ERROR(-20112, 'Valor obrigatorio nao fornecido');
+            WHEN VALUE_ERROR THEN
+                RAISE_APPLICATION_ERROR(-20113, 'Erro de atribuicao. Verifique os dados fornecidos');
+            WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20110, 'Erro em relatorio_planetas_dominados' || CHR(10) || SQLERRM);
+    END relatorio_planetas_dominados;
+    
+    FUNCTION relatorio_planetas_nao_dominados (
+        p_user USERS.ID_User%TYPE
+    ) RETURN dominancia_planeta_nao_dominado_table PIPELINED
+    AS
+        v_lider Lider%ROWTYPE;
+        v_record dominancia_planeta_nao_dominado_rec;
+        CURSOR c IS
+            SELECT
+                nome_planeta,
+                quantidade_comunidades,
+                especies_presentes,
+                total_habitantes,
+                faccoes_presentes,
+                faccao_majoritaria
+            FROM V_DOMINANCIA_PLANETAS
+            WHERE NACAO_DOMINANTE IS NULL
+                OR DATA_FIM_DOMINANCIA <= SYSDATE;
+        BEGIN
+            v_lider := PG_Users.get_user_info(p_user);
+            IF v_lider.cargo != 'COMANDANTE' THEN RAISE e_not_comandante; END IF;
+            OPEN c;
+            LOOP
+                FETCH c INTO v_record;
+                EXIT WHEN c%NOTFOUND;
+                PIPE ROW(v_record);
+            END LOOP;
+            CLOSE c;
+            RETURN;
+            
+        EXCEPTION
+            WHEN e_not_comandante THEN
+                RAISE_APPLICATION_ERROR(-20111, 'Usuario nao e comandante');
+            WHEN e_atrib_notnull THEN
+                RAISE_APPLICATION_ERROR(-20112, 'Valor obrigatorio nao fornecido');
+            WHEN VALUE_ERROR THEN
+                RAISE_APPLICATION_ERROR(-20113, 'Erro de atribuicao. Verifique os dados fornecidos');
+            WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20110, 'Erro em relatorio_planetas_nao_dominados' || CHR(10) || SQLERRM);
+    END relatorio_planetas_nao_dominados;
 END PG_Comandante;
