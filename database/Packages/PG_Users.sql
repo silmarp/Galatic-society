@@ -5,7 +5,7 @@ CREATE OR REPLACE PACKAGE PG_Users AS
     e_all_registered EXCEPTION;
     
     PROCEDURE register_users;
-    FUNCTION get_user_info (p_user_id IN USERS.ID_USER%TYPE, p_user_password IN VARCHAR2, v_lider OUT Lider%ROWTYPE) RETURN Lider%ROWTYPE;
+    FUNCTION get_user_info (p_user_id IN USERS.ID_USER%TYPE, p_user_password IN VARCHAR2) RETURN Lider%ROWTYPE;
     PROCEDURE set_user_id (p_user_id USERS.ID_USER%TYPE);
     FUNCTION get_user_id RETURN USERS.ID_USER%TYPE;
 END PG_Users;
@@ -50,9 +50,10 @@ CREATE OR REPLACE PACKAGE BODY PG_Users AS
                 RAISE_APPLICATION_ERROR(-20100, 'Erro em register_users ' || CHR(10) || SQLERRM);
     END register_users;
     
-    FUNCTION get_user_info (p_user_id IN USERS.ID_USER%TYPE, p_user_password IN VARCHAR2, v_lider OUT Lider%ROWTYPE) RETURN Lider%ROWTYPE IS
+    FUNCTION get_user_info (p_user_id IN USERS.ID_USER%TYPE, p_user_password IN VARCHAR2) RETURN Lider%ROWTYPE IS
         v_id_lider USERS.ID_LIDER%TYPE;
         v_password USERS.PASSWORD%TYPE;
+        v_lider Lider%ROWTYPE;
         BEGIN
             v_password := rawtohex(dbms_obfuscation_toolkit.md5(input => utl_raw.cast_to_raw(TRIM(p_user_password))));
             SELECT U.ID_LIDER INTO v_id_lider FROM USERS U WHERE U.ID_USER = p_user_id AND U.PASSWORD = v_password;
