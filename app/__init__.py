@@ -1,7 +1,7 @@
 from flask import Flask, flash
 from flask import request, redirect, url_for
 from flask import render_template
-from cx_Oracle import connect
+from dotenv import load_dotenv
 
 from app.forms.updateFactionName import UpdateFactionName
 from app.forms.updateLeaderFromFaction import UpdateLeaderFromFaction
@@ -13,10 +13,13 @@ from app.forms.removeNationFromFederation import RemoveNationFromFederation
 from app.forms.createStar import CreateStar
 from app.forms.deleteStar import DeleteStar
 
+from app.migrations.database import *
+
+load_dotenv()
+
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = "mysecretkey"
-app.config['ORACLE_DB_URI'] = 'oracle+cx_oracle://system:oracle@localhost:1521/xe'
 
 userSession = {
     'logged': False,
@@ -28,17 +31,17 @@ userSession = {
     'species': None
 }
 
-def verify_login(id, password):
-    conn = connect(app.config['ORACLE_DB_URI'])
-    cursor = conn.cursor()
+# def verify_login(id, password):
+#     conn = connect(app.config['ORACLE_DB_URI'])
+#     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM users WHERE id_user = :id AND password = :password", id=id, password=password)
-    user = cursor.fetchone()
+#     cursor.execute("SELECT * FROM users WHERE id_user = :id AND password = :password", id=id, password=password)
+#     user = cursor.fetchone()
 
-    cursor.close()
-    conn.close()
+#     cursor.close()
+#     conn.close()
 
-    return user is not None
+#     return user is not None
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -51,6 +54,8 @@ def login():
     if form.validate_on_submit():
         id = form.id.data
         password = form.password.data
+
+        verifyLogin(id, password)
 
         # if verify_login(username, password):
         #     return redirect(url_for('index'))
