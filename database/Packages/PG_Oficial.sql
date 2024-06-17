@@ -1,6 +1,3 @@
-DROP PACKAGE PG_Oficial;
-
-/* Package Oficial */
 CREATE OR REPLACE PACKAGE PG_Oficial AS
     -- Exceções
     e_not_oficial EXCEPTION;
@@ -11,19 +8,23 @@ CREATE OR REPLACE PACKAGE PG_Oficial AS
     );
 
     PROCEDURE relatorio_habitantes_fac (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     );
 
     PROCEDURE relatorio_habitantes_especie (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     );
 
     PROCEDURE relatorio_habitantes_planeta (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     );
 
     PROCEDURE relatorio_habitantes_sistema (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     );
 
 END PG_Oficial;
@@ -46,7 +47,8 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
     END verificar_oficial;
 
     PROCEDURE relatorio_habitantes_fac (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     ) IS
         v_nacao LIDER.NACAO%TYPE;
     BEGIN
@@ -57,11 +59,15 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
         SELECT NACAO INTO v_nacao FROM LIDER WHERE CPI = p_user;
 
         -- Chama o procedimento para gerar o relatório
-        RELATORIO_HABITANTES_POR_FACCAO(v_nacao);
+        OPEN p_cursor FOR
+            SELECT FACCAO, TOTAL_PLANETAS, TOTAL_HABITANTES
+            FROM V_HABITANTES_POR_FACCAO;
+
     END relatorio_habitantes_fac;
 
     PROCEDURE relatorio_habitantes_especie (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     ) IS
         v_nacao LIDER.NACAO%TYPE;
     BEGIN
@@ -72,11 +78,15 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
         SELECT NACAO INTO v_nacao FROM LIDER WHERE CPI = p_user;
 
         -- Chama o procedimento para gerar o relatório
-        RELATORIO_HABITANTES_POR_ESPECIE(v_nacao);
+        OPEN p_cursor FOR
+            SELECT ESPECIE, TOTAL_PLANETAS, TOTAL_HABITANTES
+            FROM V_HABITANTES_POR_ESPECIE;
+
     END relatorio_habitantes_especie;
 
     PROCEDURE relatorio_habitantes_planeta (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     ) IS
         v_nacao LIDER.NACAO%TYPE;
     BEGIN
@@ -87,11 +97,15 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
         SELECT NACAO INTO v_nacao FROM LIDER WHERE CPI = p_user;
 
         -- Chama o procedimento para gerar o relatório
-        RELATORIO_HABITANTES_POR_PLANETA(v_nacao);
+        OPEN p_cursor FOR
+            SELECT PLANETA, TOTAL_HABITANTES
+            FROM V_HABITANTES_POR_PLANETA;
+
     END relatorio_habitantes_planeta;
 
     PROCEDURE relatorio_habitantes_sistema (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     ) IS
         v_nacao LIDER.NACAO%TYPE;
     BEGIN
@@ -102,7 +116,10 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
         SELECT NACAO INTO v_nacao FROM LIDER WHERE CPI = p_user;
 
         -- Chama o procedimento para gerar o relatório
-        RELATORIO_HABITANTES_POR_SISTEMA(v_nacao);
+        OPEN p_cursor FOR
+            SELECT SISTEMA, TOTAL_PLANETAS, TOTAL_HABITANTES
+            FROM V_HABITANTES_POR_SISTEMA;
+
     END relatorio_habitantes_sistema;
 
 END PG_Oficial;
