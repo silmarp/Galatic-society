@@ -14,6 +14,13 @@ from app.forms.createStar import CreateStar
 from app.forms.deleteStar import DeleteStar
 
 from app.migrations.database import *
+from app.migrations.controllers.login import verifyLogin
+from app.migrations.controllers.changeFactionName import changeFactionName
+
+
+
+# deu pau, consertar
+from app.migrations.controllers.addDomination import addDomination
 
 load_dotenv()
 
@@ -22,6 +29,7 @@ app.config['SECRET_KEY'] = "mysecretkey"
 
 userSession = {
   'logged': False,
+  'user': None,
   'cpi': None, # cpi é o id tirando U_ do começo
   'name': None,
   'position': None,
@@ -48,11 +56,13 @@ def login():
       error = None
 
       userSession['logged'] = True
+      userSession['user'] = id
       userSession['cpi'] = response['CPI']
       userSession['name'] = response['NOME']
       userSession['position'] = response['CARGO']
       userSession['nation'] = response['NACAO']
       userSession['species'] = response['ESPECIE']
+      userSession['faction'] = response['FACCAO']
 
       return redirect(url_for('login'))
     else:
@@ -68,6 +78,7 @@ def login():
 @app.route('/logout')
 def logout():
     userSession['logged'] = False
+    userSession['user'] = None
     userSession['cpi'] = None
     userSession['name'] = None
     userSession['position'] = None
@@ -95,8 +106,18 @@ def overview():
     
     # todo: fazer com try catch, verificando o erro
     if updateFactionNameForm.validate_on_submit():
-        flash('Nome da facção alterado com sucesso!')
-        userSession['faction'] = updateFactionNameForm.faction.data
+        ok = changeFactionName(
+          userSession['user'],
+          userSession['faction'],
+          updateFactionNameForm.faction.data
+        )
+
+        if ok:
+          flash('Nome da facção alterado com sucesso!')
+          userSession['faction'] = updateFactionNameForm.faction.data
+        else:
+          flash('Erro ao alterar nome da facção!')
+
         return redirect(url_for('overview'))
 
     if updateLeaderFromFactionForm.validate_on_submit():
@@ -112,7 +133,16 @@ def overview():
         return redirect(url_for('overview'))
     
     if addDominationToNationForm.validate_on_submit():
-        flash('Dominação adicionada com sucesso!')
+        response = addDomination(
+          userSession['nation'],
+          addDominationToNationForm.planet.data,
+          addDominationToNationForm.start_date.data,
+          addDominationToNationForm.
+          end_date.data
+        )
+
+        print(response)
+
         return redirect(url_for('overview'))
     
     if removeNationFromFederationForm.validate_on_submit():
