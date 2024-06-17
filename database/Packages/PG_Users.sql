@@ -5,6 +5,7 @@ CREATE OR REPLACE PACKAGE PG_Users AS
     e_all_registered EXCEPTION;
     
     PROCEDURE register_users;
+    FUNCTION get_user_info (p_user_id IN USERS.ID_USER%TYPE, p_user_password IN VARCHAR2) RETURN Lider%ROWTYPE;
     PROCEDURE set_user_id (p_user_id USERS.ID_USER%TYPE);
     FUNCTION get_user_id RETURN USERS.ID_USER%TYPE;
 END PG_Users;
@@ -44,8 +45,26 @@ CREATE OR REPLACE PACKAGE BODY PG_Users AS
             
         EXCEPTION
             WHEN e_all_registered THEN 
-                RAISE_APPLICATION_ERROR(-20100, 'Todos os lideres ja estao cadastrados');
+                RAISE_APPLICATION_ERROR(-20101, 'Todos os lideres ja estao cadastrados');
+            WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20100, 'Erro em register_users ' || CHR(10) || SQLERRM);
     END register_users;
+    
+    FUNCTION get_user_info (p_user_id IN USERS.ID_USER%TYPE, p_user_password IN VARCHAR2) RETURN Lider%ROWTYPE IS
+        v_id_lider USERS.ID_LIDER%TYPE;
+        v_password USERS.PASSWORD%TYPE;
+        v_lider Lider%ROWTYPE;
+        BEGIN
+            v_password := rawtohex(dbms_obfuscation_toolkit.md5(input => utl_raw.cast_to_raw(TRIM(p_user_password))));
+            SELECT U.ID_LIDER INTO v_id_lider FROM USERS U WHERE U.ID_USER = p_user_id AND U.PASSWORD = v_password;
+            SELECT * INTO v_lider FROM LIDER L WHERE L.CPI = v_id_lider;
+            RETURN v_lider;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                RAISE_APPLICATION_ERROR(-20101, 'Usuario nao encontrado'); 
+            WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20100, 'Erro em get_user_info' || CHR(10) || SQLERRM);
+    END get_user_info;
     
     PROCEDURE set_user_id (p_user_id USERS.ID_USER%TYPE) IS
         BEGIN
