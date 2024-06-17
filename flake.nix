@@ -20,6 +20,7 @@
               python311Packages.virtualenv
 
               python311Packages.flask
+              python311Packages.oracledb
 
               nodePackages.pyright
               vscode-langservers-extracted
