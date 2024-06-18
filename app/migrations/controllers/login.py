@@ -22,7 +22,6 @@ def verifyLogin(id, password):
     response = db.getCursor().callfunc('PG_Users.valid_user', tipo_retorno, [id, password])
 
     objResponse = dbObj_to_dict(response)
-    print(objResponse)
 
     objResponse["FACCAO"] = "Você não é líder de facção"
 

@@ -1,11 +1,12 @@
 from app.migrations.database import *
 
-def updateStar(star_id, nome, classificacao, massa, x, y, z):
+def updateStar(user, star_id, nome, classificacao, massa, x, y, z):
   db = DbConnection()
 
   try:
     db.getCursor().callproc('PG_Cientista.atualizar_estrela',
-                            [star_id,
+                            [user,
+                             star_id,
                              nome,
                              classificacao,
                              massa,

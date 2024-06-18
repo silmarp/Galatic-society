@@ -213,7 +213,8 @@ def overview():
         print("CREATE STAR FORM")
 
         ok = addStar(
-           createStarForm.id_star.data,
+            userSession['user'],
+            createStarForm.id_star.data,
             createStarForm.name.data,
             createStarForm.classification.data,
             createStarForm.weight.data,
@@ -233,6 +234,7 @@ def overview():
         print("UPDATE STAR FORM")
 
         ok = updateStar(
+            userSession['user'],
             updateStarForm.star_id.data,
             updateStarForm.name.data,
             updateStarForm.classification.data,
@@ -243,9 +245,9 @@ def overview():
         )
 
         if ok:
-          flash('Estrela adicionada com sucesso!')
+          flash('Estrela atualizada com sucesso!')
         else:
-          flash('Erro ao adicionar estrela!')
+          flash('Erro ao atualizar estrela!')
 
         return redirect(url_for('overview'))
     
@@ -253,6 +255,7 @@ def overview():
         print("DELETE STAR FORM")
         
         ok = deleteStar(
+            userSession['user'],
             deleteStarForm.star_id.data
         )
 
