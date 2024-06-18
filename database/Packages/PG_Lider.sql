@@ -54,6 +54,7 @@ CREATE OR REPLACE PACKAGE PG_Lider AS
     FUNCTION is_lider (
         p_user USERS.ID_User%TYPE
     ) RETURN Faccao%ROWTYPE;
+
 END PG_Lider;
 /
 
@@ -327,17 +328,29 @@ CREATE OR REPLACE PACKAGE BODY PG_Lider AS
             v_lider_faccao := is_lider(p_user);
             IF v_lider_faccao.lider IS NULL THEN RAISE e_not_lider; END IF;
 
-            OPEN c_report FOR
-                SELECT p.FACCAO, c.NOME, c.ESPECIE, c.QTD_HABITANTES, h.PLANETA, d.NACAO, e.ID_ESTRELA, s.NOME 
-                    FROM participa p JOIN COMUNIDADE c ON p.COMUNIDADE = c.NOME AND p.ESPECIE = c.ESPECIE
-                    JOIN HABITACAO h ON h.COMUNIDADE = c.NOME AND h.ESPECIE = c.ESPECIE 
-                    JOIN DOMINANCIA d ON d.PLANETA = h.PLANETA
-                    JOIN ORBITA_PLANETA op ON op.PLANETA = h.PLANETA 
-                    JOIN ESTRELA e ON e.ID_ESTRELA = op.ESTRELA
-                    JOIN SISTEMA s ON s.ESTRELA = e.ID_ESTRELA 
-                    WHERE p.FACCAO = p_faccao;            
+            IF p_grouping = 'N' THEN	
+                OPEN c_report FOR 
+                    SELECT * FROM V_RL_LIDER WHERE faccao = p_faccao ORDER BY nacao;	
+
+            ELSIF p_grouping = 'E' THEN	
+                OPEN c_report FOR 
+                    SELECT * FROM V_RL_LIDER WHERE faccao = p_faccao ORDER BY especie;	
+                
+            ELSIF p_grouping = 'P' THEN	
+                OPEN c_report FOR 
+                    SELECT * FROM V_RL_LIDER WHERE faccao = p_faccao ORDER BY planeta;	
+                
+            ELSIF p_grouping = 'S' THEN	
+                OPEN c_report FOR 
+                    SELECT * FROM V_RL_LIDER WHERE faccao = p_faccao ORDER BY estrela;		
+            
+            ELSE
+                OPEN c_report FOR 
+                    SELECT * FROM V_RL_LIDER WHERE faccao = p_faccao;	
+                
+            END IF;
+
             RETURN c_report;
-        
         EXCEPTION
             WHEN e_not_lider THEN
                 RAISE_APPLICATION_ERROR(-20121, 'Acesso não autorizado');
