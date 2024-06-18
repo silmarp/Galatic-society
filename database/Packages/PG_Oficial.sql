@@ -41,7 +41,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
 
     FUNCTION relatorio_oficial (
         p_user USERS.ID_User%TYPE,
-        p_faccao FACCAO.NOME%TYPE,
+        p_nacao NACAO.NOME%TYPE,
         p_grouping char
     ) RETURN sys_refcursor IS
         c_report sys_refcursor;
@@ -52,22 +52,23 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
     
             IF p_grouping = 'F' THEN	
                 OPEN c_report FOR 	
-                    SELECT * FROM V_RL_OFICIAL order BY faccao;
+                    SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao order BY faccao;
                 
             ELSIF p_grouping = 'E' THEN	
                 OPEN c_report FOR 
-                    SELECT * FROM V_RL_OFICIAL order BY especie;
+                    SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao order BY especie;
                 
             ELSIF p_grouping = 'P' THEN	
                 OPEN c_report FOR 
-                    SELECT * FROM V_RL_OFICIAL order BY planeta;
+                    SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao order BY planeta;
     
             ELSIF p_grouping = 'S' THEN	
                 OPEN c_report FOR 
-                    SELECT * FROM V_RL_OFICIAL order BY estrela;
+                    SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao order BY estrela;
     
             ELSE
                 OPEN c_report FOR
+                    SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao;
                         
             END IF;
             RETURN c_report;
