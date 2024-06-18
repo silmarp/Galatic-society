@@ -8,6 +8,7 @@ CREATE OR REPLACE PACKAGE PG_Cientista AS
 
     -- Procedimentos de CRUD de estrelas
     PROCEDURE criar_estrela (
+        p_user IN LIDER.CPI%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE,
         p_nome IN ESTRELA.NOME%TYPE,
         p_classificacao IN ESTRELA.CLASSIFICACAO%TYPE,
@@ -18,6 +19,7 @@ CREATE OR REPLACE PACKAGE PG_Cientista AS
     );
 
     PROCEDURE atualizar_estrela (
+        p_user IN LIDER.CPI%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE,
         p_nome IN ESTRELA.NOME%TYPE,
         p_classificacao IN ESTRELA.CLASSIFICACAO%TYPE,
@@ -28,10 +30,12 @@ CREATE OR REPLACE PACKAGE PG_Cientista AS
     );
 
     FUNCTION ler_estrela (
+        p_user IN LIDER.CPI%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE
     ) RETURN ESTRELA%ROWTYPE;
 
     PROCEDURE deletar_estrela (
+        p_user IN LIDER.CPI%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE
     );
 
@@ -74,6 +78,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     END verificar_cientista;
 
     PROCEDURE criar_estrela (
+        p_user IN LIDER.CPI%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE,
         p_nome IN ESTRELA.NOME%TYPE,
         p_classificacao IN ESTRELA.CLASSIFICACAO%TYPE,
@@ -84,7 +89,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     ) IS
     BEGIN
         -- Verifica se o usuário é um cientista
-        verificar_cientista(USER);
+        verificar_cientista(p_user);
 
         -- Insere a nova estrela
         INSERT INTO ESTRELA (ID_ESTRELA, NOME, CLASSIFICACAO, MASSA, X, Y, Z)
@@ -101,6 +106,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     END criar_estrela;
 
     PROCEDURE atualizar_estrela (
+        p_user IN LIDER.CPI%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE,
         p_nome IN ESTRELA.NOME%TYPE,
         p_classificacao IN ESTRELA.CLASSIFICACAO%TYPE,
@@ -111,7 +117,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     ) IS
     BEGIN
         -- Verifica se o usuário é um cientista
-        verificar_cientista(USER);
+        verificar_cientista(p_user);
 
         -- Atualiza os dados da estrela
         UPDATE ESTRELA
@@ -134,12 +140,13 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     END atualizar_estrela;
 
     FUNCTION ler_estrela (
+        p_user IN LIDER.CPI%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE
     ) RETURN ESTRELA%ROWTYPE IS
         v_estrela ESTRELA%ROWTYPE;
     BEGIN
         -- Verifica se o usuário é um cientista
-        verificar_cientista(USER);
+        verificar_cientista(p_user);
 
         -- Obtém os dados da estrela
         SELECT *
@@ -158,11 +165,12 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     END ler_estrela;
 
     PROCEDURE deletar_estrela (
+        p_user IN LIDER.CPI%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE
     ) IS
     BEGIN
         -- Verifica se o usuário é um cientista
-        verificar_cientista(USER);
+        verificar_cientista(p_user);
 
         -- Deleta a estrela
         DELETE FROM ESTRELA
@@ -231,6 +239,11 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
 
 END PG_Cientista;
 /
+
+
+
+
+
 
 
 
