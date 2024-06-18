@@ -68,7 +68,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
     
             ELSE
                 OPEN c_report FOR
-                        
+                    SELECT * FROM V_RL_OFICIAL;
             END IF;
             RETURN c_report;
         EXCEPTION

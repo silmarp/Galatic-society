@@ -31,41 +31,17 @@ CREATE OR REPLACE PACKAGE PG_Comandante AS
         p_dominancia_data_fim Dominancia.Data_fim%TYPE DEFAULT NULL
     );
 
-    TYPE dominancia_planeta_dominado_rec IS RECORD (
-        nome_planeta VARCHAR2(100),
-        nacao_dominante VARCHAR2(100),
-        data_inicio_dominancia DATE,
-        data_fim_dominancia DATE,
-        quantidade_comunidades NUMBER,
-        especies_presentes VARCHAR2(4000),
-        total_habitantes NUMBER,
-        faccoes_presentes VARCHAR2(4000),
-        faccao_majoritaria VARCHAR2(100)
-    );
-
-    TYPE dominancia_planeta_nao_dominado_rec IS RECORD (
-        nome_planeta VARCHAR2(100),
-        quantidade_comunidades NUMBER,
-        especies_presentes VARCHAR2(4000),
-        total_habitantes NUMBER,
-        faccoes_presentes VARCHAR2(4000),
-        faccao_majoritaria VARCHAR2(100)
-    );
-    
-    TYPE dominancia_planeta_dominado_table IS TABLE OF dominancia_planeta_dominado_rec;
-    TYPE dominancia_planeta_nao_dominado_table IS TABLE OF dominancia_planeta_nao_dominado_rec;
-
     FUNCTION relatorio_dominancia_planetas (
         p_user USERS.ID_User%TYPE
-    ) RETURN dominancia_planeta_dominado_table PIPELINED;
+    ) RETURN SYS_REFCURSOR;
+    
+    FUNCTION relatorio_planetas_dominados (
+        p_user USERS.ID_User%TYPE
+    ) RETURN SYS_REFCURSOR;
     
     FUNCTION relatorio_planetas_nao_dominados (
         p_user USERS.ID_User%TYPE
-    ) RETURN dominancia_planeta_nao_dominado_table PIPELINED;
-
-    FUNCTION relatorio_planetas_dominados (
-        p_user USERS.ID_User%TYPE
-    ) RETURN dominancia_planeta_dominado_table PIPELINED;
+    ) RETURN SYS_REFCURSOR;
 END PG_Comandante;
 /
 
@@ -180,34 +156,29 @@ CREATE OR REPLACE PACKAGE BODY PG_Comandante AS
     
     FUNCTION relatorio_dominancia_planetas (
         p_user USERS.ID_User%TYPE
-    ) RETURN dominancia_planeta_dominado_table PIPELINED
+    ) RETURN SYS_REFCURSOR
     AS
         v_lider Lider%ROWTYPE;
-        v_record dominancia_planeta_dominado_rec;
-        CURSOR c IS
-            SELECT
-                nome_planeta,
-                nacao_dominante,
-                data_inicio_dominancia,
-                data_fim_dominancia,
-                quantidade_comunidades,
-                especies_presentes,
-                total_habitantes,
-                faccoes_presentes,
-                faccao_majoritaria
-            FROM V_DOMINANCIA_PLANETAS;
+        v_cursor SYS_REFCURSOR;
             
         BEGIN
             v_lider := PG_Users.get_user_info(p_user);
             IF v_lider.cargo != 'COMANDANTE' THEN RAISE e_not_comandante; END IF;
-            OPEN c;
-            LOOP
-                FETCH c INTO v_record;
-                EXIT WHEN c%NOTFOUND;
-                PIPE ROW(v_record);
-            END LOOP;
-            CLOSE c;
-            RETURN;
+            
+            OPEN v_cursor FOR
+                SELECT
+                    nome_planeta,
+                    nacao_dominante,
+                    data_inicio_dominancia,
+                    data_fim_dominancia,
+                    quantidade_comunidades,
+                    especies_presentes,
+                    total_habitantes,
+                    faccoes_presentes,
+                    faccao_majoritaria
+                FROM V_DOMINANCIA_PLANETAS;
+            
+            RETURN v_cursor;
             
         EXCEPTION
             WHEN e_not_comandante THEN
@@ -222,35 +193,30 @@ CREATE OR REPLACE PACKAGE BODY PG_Comandante AS
 
     FUNCTION relatorio_planetas_dominados (
         p_user USERS.ID_User%TYPE
-    ) RETURN dominancia_planeta_dominado_table PIPELINED
+    ) RETURN SYS_REFCURSOR
     AS
         v_lider Lider%ROWTYPE;
-        v_record dominancia_planeta_dominado_rec;
-        CURSOR c IS
-            SELECT
-                nome_planeta,
-                nacao_dominante,
-                data_inicio_dominancia,
-                data_fim_dominancia,
-                quantidade_comunidades,
-                especies_presentes,
-                total_habitantes,
-                faccoes_presentes,
-                faccao_majoritaria
-            FROM V_DOMINANCIA_PLANETAS
-            WHERE NACAO_DOMINANTE IS NOT NULL
-                AND DATA_FIM_DOMINANCIA > SYSDATE;
+        v_cursor SYS_REFCURSOR;
+        
         BEGIN
             v_lider := PG_Users.get_user_info(p_user);
             IF v_lider.cargo != 'COMANDANTE' THEN RAISE e_not_comandante; END IF;
-            OPEN c;
-            LOOP
-                FETCH c INTO v_record;
-                EXIT WHEN c%NOTFOUND;
-                PIPE ROW(v_record);
-            END LOOP;
-            CLOSE c;
-            RETURN;
+            
+            OPEN v_cursor FOR
+                SELECT
+                    nome_planeta,
+                    nacao_dominante,
+                    data_inicio_dominancia,
+                    data_fim_dominancia,
+                    quantidade_comunidades,
+                    especies_presentes,
+                    total_habitantes,
+                    faccoes_presentes,
+                    faccao_majoritaria
+                FROM V_DOMINANCIA_PLANETAS
+                WHERE NACAO_DOMINANTE IS NOT NULL
+                    AND DATA_FIM_DOMINANCIA > SYSDATE;
+            RETURN v_cursor;
             
         EXCEPTION
             WHEN e_not_comandante THEN
@@ -265,32 +231,30 @@ CREATE OR REPLACE PACKAGE BODY PG_Comandante AS
     
     FUNCTION relatorio_planetas_nao_dominados (
         p_user USERS.ID_User%TYPE
-    ) RETURN dominancia_planeta_nao_dominado_table PIPELINED
+    ) RETURN SYS_REFCURSOR
     AS
         v_lider Lider%ROWTYPE;
-        v_record dominancia_planeta_nao_dominado_rec;
-        CURSOR c IS
-            SELECT
-                nome_planeta,
-                quantidade_comunidades,
-                especies_presentes,
-                total_habitantes,
-                faccoes_presentes,
-                faccao_majoritaria
-            FROM V_DOMINANCIA_PLANETAS
-            WHERE NACAO_DOMINANTE IS NULL
-                OR DATA_FIM_DOMINANCIA <= SYSDATE;
+        v_cursor SYS_REFCURSOR;
+
         BEGIN
             v_lider := PG_Users.get_user_info(p_user);
             IF v_lider.cargo != 'COMANDANTE' THEN RAISE e_not_comandante; END IF;
-            OPEN c;
-            LOOP
-                FETCH c INTO v_record;
-                EXIT WHEN c%NOTFOUND;
-                PIPE ROW(v_record);
-            END LOOP;
-            CLOSE c;
-            RETURN;
+            
+            OPEN v_cursor FOR
+                SELECT
+                    nome_planeta,
+                    nacao_dominante,
+                    data_inicio_dominancia,
+                    data_fim_dominancia,
+                    quantidade_comunidades,
+                    especies_presentes,
+                    total_habitantes,
+                    faccoes_presentes,
+                    faccao_majoritaria
+                FROM V_DOMINANCIA_PLANETAS
+                WHERE NACAO_DOMINANTE IS NULL
+                    OR DATA_FIM_DOMINANCIA <= SYSDATE;
+            RETURN v_cursor;
             
         EXCEPTION
             WHEN e_not_comandante THEN
