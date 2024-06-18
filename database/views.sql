@@ -38,6 +38,11 @@ SELECT S.NOME AS SISTEMA, COUNT(DISTINCT H.PLANETA) AS TOTAL_PLANETAS, SUM(C.QTD
         JOIN DOMINANCIA D ON H.PLANETA = D.PLANETA
 GROUP BY S.NOME;
 
+--
+
+
+-- Views para relatorios de comandante
+
 --View para contar comunidades por planeta:
 CREATE OR REPLACE VIEW V_CONTAGEM_COMUNIDADES AS
 SELECT h2.planeta, COUNT(DISTINCT c.especie || '-' || c.nome) AS quantidade_comunidades
@@ -74,3 +79,16 @@ SELECT
         LEFT JOIN v_contagem_comunidades cc ON p.id_astro = cc.planeta
         LEFT JOIN v_faccao_majoritaria fm ON p.id_astro = fm.planeta
 GROUP BY p.id_astro, d.nacao, d.data_ini, d.data_fim, cc.quantidade_comunidades, fm.faccao;
+
+
+--
+
+-- Views do líder de faccao
+CREATE OR REPLACE VIEW V_LIDER_FACCAO
+    (LIDER, FACCAO, NACAO, PLANETA, COM_ESPECIE, COM_NOME, PARTICIPA) AS
+SELECT F.LIDER, F.NOME, NF.NACAO, D.PLANETA, H.ESPECIE, H.COMUNIDADE, P.FACCAO 
+    FROM NACAO_FACCAO NF JOIN FACCAO F ON NF.FACCAO = F.NOME
+        LEFT JOIN DOMINANCIA D ON D.NACAO = NF.NACAO
+        LEFT JOIN HABITACAO H ON H.PLANETA = D.PLANETA
+        LEFT JOIN PARTICIPA P ON P.ESPECIE = H.ESPECIE AND P.COMUNIDADE = H.COMUNIDADE
+    WHERE D.DATA_FIM >= TO_DATE(SYSDATE) OR D.DATA_FIM IS NULL;
