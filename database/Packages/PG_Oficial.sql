@@ -8,22 +8,22 @@ CREATE OR REPLACE PACKAGE PG_Oficial AS
     );
 
     PROCEDURE relatorio_habitantes_fac (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     );
 
     PROCEDURE relatorio_habitantes_especie (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     );
 
     PROCEDURE relatorio_habitantes_planeta (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     );
 
     PROCEDURE relatorio_habitantes_sistema (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     );
 
@@ -50,7 +50,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
     END verificar_oficial;
 
     PROCEDURE relatorio_habitantes_fac (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     ) IS
         v_nacao LIDER.NACAO%TYPE;
@@ -73,7 +73,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
     END relatorio_habitantes_fac;
 
     PROCEDURE relatorio_habitantes_especie (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     ) IS
         v_nacao LIDER.NACAO%TYPE;
@@ -96,7 +96,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
     END relatorio_habitantes_especie;
 
     PROCEDURE relatorio_habitantes_planeta (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     ) IS
         v_nacao LIDER.NACAO%TYPE;
@@ -119,7 +119,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
     END relatorio_habitantes_planeta;
 
     PROCEDURE relatorio_habitantes_sistema (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     ) IS
         v_nacao LIDER.NACAO%TYPE;
