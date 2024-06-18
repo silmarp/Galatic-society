@@ -8,19 +8,23 @@ CREATE OR REPLACE PACKAGE PG_Oficial AS
     );
 
     PROCEDURE relatorio_habitantes_fac (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     );
 
     PROCEDURE relatorio_habitantes_especie (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     );
 
     PROCEDURE relatorio_habitantes_planeta (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     );
 
     PROCEDURE relatorio_habitantes_sistema (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     );
 
 END PG_Oficial;
@@ -46,10 +50,10 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
     END verificar_oficial;
 
     PROCEDURE relatorio_habitantes_fac (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     ) IS
         v_nacao LIDER.NACAO%TYPE;
-        v_cursor SYS_REFCURSOR;
     BEGIN
         -- Verifica se o usuário é um oficial
         verificar_oficial(p_user);
@@ -59,8 +63,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
 
         -- Chama o procedimento para gerar o relatório
         BEGIN
-            RL_Oficial.RELATORIO_HABITANTES_POR_FACCAO(v_nacao, v_cursor);
-            -- Aqui você pode fazer algo com o cursor, como retorná-lo ou usar seus resultados diretamente.
+            RL_Oficial.RELATORIO_HABITANTES_POR_FACCAO(v_nacao, p_cursor);
         EXCEPTION
             WHEN NO_DATA_FOUND THEN
                 RAISE_APPLICATION_ERROR(-20004, 'Nenhuma informação encontrada para gerar relatório por facção.');
@@ -70,10 +73,10 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
     END relatorio_habitantes_fac;
 
     PROCEDURE relatorio_habitantes_especie (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     ) IS
         v_nacao LIDER.NACAO%TYPE;
-        v_cursor SYS_REFCURSOR;
     BEGIN
         -- Verifica se o usuário é um oficial
         verificar_oficial(p_user);
@@ -83,8 +86,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
 
         -- Chama o procedimento para gerar o relatório
         BEGIN
-            RL_Oficial.RELATORIO_HABITANTES_POR_ESPECIE(v_nacao, v_cursor);
-            -- Aqui você pode fazer algo com o cursor, como retorná-lo ou usar seus resultados diretamente.
+            RL_Oficial.RELATORIO_HABITANTES_POR_ESPECIE(v_nacao, p_cursor);
         EXCEPTION
             WHEN NO_DATA_FOUND THEN
                 RAISE_APPLICATION_ERROR(-20006, 'Nenhuma informação encontrada para gerar relatório por espécie.');
@@ -94,10 +96,10 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
     END relatorio_habitantes_especie;
 
     PROCEDURE relatorio_habitantes_planeta (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     ) IS
         v_nacao LIDER.NACAO%TYPE;
-        v_cursor SYS_REFCURSOR;
     BEGIN
         -- Verifica se o usuário é um oficial
         verificar_oficial(p_user);
@@ -107,8 +109,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
 
         -- Chama o procedimento para gerar o relatório
         BEGIN
-            RL_Oficial.RELATORIO_HABITANTES_POR_PLANETA(v_nacao, v_cursor);
-            -- Aqui você pode fazer algo com o cursor, como retorná-lo ou usar seus resultados diretamente.
+            RL_Oficial.RELATORIO_HABITANTES_POR_PLANETA(v_nacao, p_cursor);
         EXCEPTION
             WHEN NO_DATA_FOUND THEN
                 RAISE_APPLICATION_ERROR(-20008, 'Nenhuma informação encontrada para gerar relatório por planeta.');
@@ -118,10 +119,10 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
     END relatorio_habitantes_planeta;
 
     PROCEDURE relatorio_habitantes_sistema (
-        p_user IN LIDER.CPI%TYPE
+        p_user IN LIDER.CPI%TYPE,
+        p_cursor OUT SYS_REFCURSOR
     ) IS
         v_nacao LIDER.NACAO%TYPE;
-        v_cursor SYS_REFCURSOR;
     BEGIN
         -- Verifica se o usuário é um oficial
         verificar_oficial(p_user);
@@ -131,8 +132,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
 
         -- Chama o procedimento para gerar o relatório
         BEGIN
-            RL_Oficial.RELATORIO_HABITANTES_POR_SISTEMA(v_nacao, v_cursor);
-            -- Aqui você pode fazer algo com o cursor, como retorná-lo ou usar seus resultados diretamente.
+            RL_Oficial.RELATORIO_HABITANTES_POR_SISTEMA(v_nacao, p_cursor);
         EXCEPTION
             WHEN NO_DATA_FOUND THEN
                 RAISE_APPLICATION_ERROR(-20010, 'Nenhuma informação encontrada para gerar relatório por sistema.');
@@ -143,4 +143,5 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
 
 END PG_Oficial;
 /
+
 
