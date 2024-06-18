@@ -320,7 +320,8 @@ CREATE OR REPLACE PACKAGE BODY PG_Lider AS
 
     FUNCTION relatorio_lider_faccao (
         p_user USERS.ID_User%TYPE,
-        p_faccao FACCAO.NOME%TYPE
+        p_faccao FACCAO.NOME%TYPE,
+        p_grouping char
     ) RETURN sys_refcursor IS
         v_lider_faccao Faccao%ROWTYPE;
         c_report sys_refcursor;
