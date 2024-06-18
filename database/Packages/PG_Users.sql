@@ -5,8 +5,8 @@ CREATE OR REPLACE PACKAGE PG_Users AS
     e_all_registered EXCEPTION;
     
     PROCEDURE register_users;
-
-    FUNCTION get_user_info (p_user_id IN USERS.ID_USER%TYPE, p_user_password IN VARCHAR2) RETURN Lider%ROWTYPE;
+    FUNCTION valid_user (p_user_id IN USERS.ID_USER%TYPE, p_user_password IN VARCHAR2) RETURN Lider%ROWTYPE;
+    FUNCTION get_user_info (p_user_id IN USERS.ID_USER%TYPE) RETURN Lider%ROWTYPE;
     PROCEDURE set_user_id (p_user_id USERS.ID_USER%TYPE);
     FUNCTION get_user_id RETURN USERS.ID_USER%TYPE;
 END PG_Users;
@@ -51,8 +51,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Users AS
                 RAISE_APPLICATION_ERROR(-20100, 'Erro em register_users ' || CHR(10) || SQLERRM);
     END register_users;
     
-
-    FUNCTION get_user_info (p_user_id IN USERS.ID_USER%TYPE, p_user_password IN VARCHAR2) RETURN Lider%ROWTYPE IS
+    FUNCTION valid_user (p_user_id IN USERS.ID_USER%TYPE, p_user_password IN VARCHAR2) RETURN Lider%ROWTYPE IS
         v_id_lider USERS.ID_LIDER%TYPE;
         v_password USERS.PASSWORD%TYPE;
         v_lider Lider%ROWTYPE;
@@ -65,9 +64,23 @@ CREATE OR REPLACE PACKAGE BODY PG_Users AS
             WHEN NO_DATA_FOUND THEN
                 RAISE_APPLICATION_ERROR(-20101, 'Usuario nao encontrado'); 
             WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20100, 'Erro em valid_user' || CHR(10) || SQLERRM);
+    END valid_user;
+    
+    FUNCTION get_user_info (p_user_id IN USERS.ID_USER%TYPE) RETURN Lider%ROWTYPE IS
+        v_id_lider USERS.ID_LIDER%TYPE;
+        v_lider Lider%ROWTYPE;
+        BEGIN
+            SELECT U.ID_LIDER INTO v_id_lider FROM USERS U WHERE U.ID_USER = p_user_id;
+            SELECT * INTO v_lider FROM LIDER L WHERE L.CPI = v_id_lider;
+            RETURN v_lider;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                RAISE_APPLICATION_ERROR(-20101, 'Usuario nao encontrado'); 
+            WHEN OTHERS THEN
                 RAISE_APPLICATION_ERROR(-20100, 'Erro em get_user_info' || CHR(10) || SQLERRM);
     END get_user_info;
-    
+
     PROCEDURE set_user_id (p_user_id USERS.ID_USER%TYPE) IS
         BEGIN
             g_user_id := p_user_id;
