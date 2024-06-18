@@ -31,21 +31,19 @@ CREATE OR REPLACE PACKAGE PG_Lider AS
     
     PROCEDURE insert_comunidade (
         p_user IN USERS.ID_User%TYPE,
-        p_faccao IN Faccao.Nome%TYPE, 
         p_com_especie IN Comunidade.Especie%TYPE,
         p_com_nome IN Comunidade.Nome%TYPE
     );
   
     PROCEDURE delete_comunidade (
         p_user IN USERS.ID_User%TYPE,
-        p_faccao IN Faccao.Nome%TYPE, 
         p_com_especie IN Comunidade.Especie%TYPE,
         p_com_nome IN Comunidade.Nome%TYPE
     );
     
     PROCEDURE remover_faccao_da_nacao (
-        p_user USERS.ID_User%TYPE,
-        p_nome_faccao IN NACAO_FACCAO.FACCAO%TYPE
+        p_user IN USERS.ID_User%TYPE,
+        p_nacao IN NACAO_FACCAO.NACAO%TYPE
     );
 
     FUNCTION relatorio_lider_faccao (
@@ -216,7 +214,6 @@ CREATE OR REPLACE PACKAGE BODY PG_Lider AS
     
     PROCEDURE insert_comunidade (
         p_user IN USERS.ID_User%TYPE,
-        p_faccao IN Faccao.Nome%TYPE, 
         p_com_especie IN Comunidade.Especie%TYPE,
         p_com_nome IN Comunidade.Nome%TYPE
     ) AS
@@ -228,7 +225,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Lider AS
             IF v_lider_faccao.lider IS NULL THEN RAISE e_not_lider; END IF;
     
             -- Verifica se o líder atual está autorizado para a facção específica
-            SELECT COUNT(*) INTO v_count FROM FACCAO WHERE LIDER = v_lider_faccao.lider AND NOME = p_faccao;
+            SELECT COUNT(*) INTO v_count FROM FACCAO WHERE LIDER = v_lider_faccao.lider AND NOME = v_lider_faccao.nome;
             IF v_count = 0 THEN RAISE e_not_lider; END IF;
             
             SELECT 1 INTO v_valida 
@@ -245,17 +242,16 @@ CREATE OR REPLACE PACKAGE BODY PG_Lider AS
                 RAISE_APPLICATION_ERROR(-20122, 'Comunidade não encontrada');
             WHEN NO_DATA_FOUND THEN
                 RAISE_APPLICATION_ERROR(-20125, 'A comunidade [' || p_com_nome || '] da especie [' || p_com_especie 
-                    || '] nao habita planetas dominados por nacoes onde a faccao [' || p_faccao || ']' || ' esta presente/credenciada' || CHR(10));
+                    || '] nao habita planetas dominados por nacoes onde a faccao [' || v_lider_faccao.nome || ']' || ' esta presente/credenciada' || CHR(10));
             WHEN DUP_VAL_ON_INDEX THEN
                 RAISE_APPLICATION_ERROR(-20126, 'A comunidade [' || p_com_nome || '] da especie [' || p_com_especie
-                    || '] ja participa da faccao [' || p_faccao || ']' || CHR(10));
+                    || '] ja participa da faccao [' || v_lider_faccao.nome || ']' || CHR(10));
             WHEN OTHERS THEN
                 RAISE_APPLICATION_ERROR(-20120, 'Erro em insert_comunidade' || CHR(10) || SQLERRM);
     END insert_comunidade;
     
     PROCEDURE delete_comunidade (
         p_user IN USERS.ID_User%TYPE,
-        p_faccao IN Faccao.Nome%TYPE, 
         p_com_especie IN Comunidade.Especie%TYPE,
         p_com_nome IN Comunidade.Nome%TYPE
     ) AS
@@ -267,15 +263,15 @@ CREATE OR REPLACE PACKAGE BODY PG_Lider AS
         IF v_lider_faccao.lider IS NULL THEN RAISE e_not_lider; END IF;
 
         -- Verifica se o líder atual está autorizado para a facção específica
-        SELECT COUNT(*) INTO v_count FROM FACCAO WHERE LIDER = v_lider_faccao.lider AND NOME = p_faccao;
+        SELECT COUNT(*) INTO v_count FROM FACCAO WHERE LIDER = v_lider_faccao.lider AND NOME = v_lider_faccao.nome;
         IF v_count = 0 THEN RAISE e_not_lider; END IF;
         
         SELECT 1 INTO v_valida 
             FROM V_LIDER_FACCAO
-            WHERE PARTICIPA = p_faccao
+            WHERE PARTICIPA = v_lider_faccao.nome
             FETCH FIRST 1 ROWS ONLY;
         DELETE FROM V_LIDER_FACCAO WHERE
-            FACCAO = p_faccao AND
+            FACCAO = v_lider_faccao.nome AND
             COM_ESPECIE = p_com_especie AND
             COM_NOME = p_com_nome;      
         COMMIT;
@@ -286,23 +282,23 @@ CREATE OR REPLACE PACKAGE BODY PG_Lider AS
             RAISE_APPLICATION_ERROR(-20122, 'Comunidade não encontrada');
         WHEN NO_DATA_FOUND THEN
             RAISE_APPLICATION_ERROR(-20125, 'A comunidade [' || p_com_nome || '] da especie [' || p_com_especie
-                || '] nao participa da faccao [' || p_faccao || ']' || CHR(10));
+                || '] nao participa da faccao [' || v_lider_faccao.nome || ']' || CHR(10));
         WHEN OTHERS THEN
             RAISE_APPLICATION_ERROR(-20000, 'Erro em delete_comunidade' || CHR(10) || SQLERRM);
     END delete_comunidade;
     
     PROCEDURE remover_faccao_da_nacao (
-        p_user USERS.ID_User%TYPE,
-        p_nome_faccao IN NACAO_FACCAO.FACCAO%TYPE
+        p_user IN USERS.ID_User%TYPE,
+        p_nacao IN NACAO_FACCAO.NACAO%TYPE
     ) IS
         v_lider_faccao Faccao%ROWTYPE;
         BEGIN
             v_lider_faccao := is_lider(p_user);
             IF v_lider_faccao.lider IS NULL THEN RAISE e_not_lider; END IF;
-    
+            
             -- Remove a facção da tabela NacaoFacao
             BEGIN
-                DELETE FROM NACAO_FACCAO WHERE FACCAO = p_nome_faccao;
+                DELETE FROM NACAO_FACCAO WHERE FACCAO = v_lider_faccao.nome AND NACAO = p_nacao;
                 IF SQL%ROWCOUNT = 0 THEN
                     RAISE e_faccao_not_found;
                 END IF;
