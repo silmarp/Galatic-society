@@ -63,13 +63,11 @@ END PG_Cientista;
 CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
 
     PROCEDURE verificar_cientista (
-        p_user IN LIDER.CPI%TYPE
+        p_user USERS.ID_User%TYPE
     ) IS
         v_user LIDER%ROWTYPE;
     BEGIN
-        -- Obtém as informações do usuário
-        SELECT * INTO v_user FROM LIDER WHERE CPI = p_user;
-
+        v_user := PG_Users.get_user_info(p_user);
         -- Verifica se o usuário é um cientista
         IF v_user.CARGO != 'CIENTISTA' THEN
             RAISE e_not_cientista;

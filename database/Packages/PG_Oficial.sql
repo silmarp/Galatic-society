@@ -4,7 +4,7 @@ DROP PACKAGE PG_Oficial;
 CREATE OR REPLACE PACKAGE PG_Oficial AS
 
     PROCEDURE verificar_oficial (
-        p_user IN LIDER.CPI%TYPE
+        p_user USERS.ID_User%TYPE
     );
 
     PROCEDURE relatorio_habitantes_fac (
@@ -29,13 +29,11 @@ END PG_Oficial;
 CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
 
     PROCEDURE verificar_oficial (
-        p_user IN LIDER.CPI%TYPE
+        p_user USERS.ID_User%TYPE
     ) IS
         v_user LIDER%ROWTYPE;
     BEGIN
-        -- Obtém as informações do usuário
-        SELECT * INTO v_user FROM LIDER WHERE CPI = p_user;
-
+        v_user := PG_Users.get_user_info(p_user);
         -- Verifica se o usuário é um oficial
         IF v_user.CARGO != 'OFICIAL' THEN
             RAISE_APPLICATION_ERROR(-20001, 'Usuário não é um oficial.');
