@@ -127,6 +127,7 @@
         </form>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -159,20 +160,6 @@
             ) }}
           </div>
           {{ addFederationToNationForm.submit(
-            class="btn btn-primary"
-          ) }}
-        </form>
-      </div>
-    </div>
-  
-    <div class="card" style="width: 18rem; height: 23vh;">
-      <div class="card-body">
-        <h5 class="card-title">Excluir nação da federação </h5>
-        <p class="card-text">Ao confirmar, a operação não poderá ser desfeita!</p>
-        <form method="POST">
-          {{ removeNationFromFederationForm.hidden_tag() }}
-          
-          {{ removeNationFromFederationForm.submit(
             class="btn btn-primary"
           ) }}
         </form>
@@ -217,6 +204,21 @@
       </div>
     </div>
 
+    <!-- <div class="card" style="width: 18rem; height: 23vh;">
+      <div class="card-body">
+        <h5 class="card-title">Excluir nação da federação </h5>
+        <p class="card-text">Ao confirmar, a operação não poderá ser desfeita!</p>
+        <form method="POST">
+          {{ removeNationFromFederationForm.hidden_tag() }}
+          
+          {{ removeNationFromFederationForm.submitRMFF(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div> -->
+    
+  </div>
 </div>
 
 
@@ -229,10 +231,10 @@
         <form method="POST">
           {{ createStarForm.hidden_tag() }}
           <div class="mb-3">
-            {{ createStarForm.star_id.label(
+            {{ createStarForm.id_star.label(
               class="form-label"
             )}}
-            {{ createStarForm.star_id(
+            {{ createStarForm.id_star(
               class="form-control",
               placeholder="Id da estrela..."
             ) }}
@@ -299,6 +301,82 @@
       </div>
     </div>
 
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Atualizar estrela</h5>
+        <form method="POST">
+          {{ updateStarForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ updateStarForm.star_id.label(
+              class="form-label"
+            )}}
+            {{ updateStarForm.star_id(
+              class="form-control",
+              placeholder="Id da estrela..."
+            ) }}
+          </div>
+
+          <div class="mb-3">
+            {{ updateStarForm.name.label(
+              class="form-label"
+            )}}
+            
+            {{ updateStarForm.name(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ updateStarForm.classification.label(
+              class="form-label"
+            )}}
+
+            {{ updateStarForm.classification(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ updateStarForm.weight.label(
+              class="form-label"
+            )}}
+
+            {{ updateStarForm.weight(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ updateStarForm.X.label(
+              class="form-label"
+            )}}
+
+            {{ updateStarForm.X(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ updateStarForm.Y.label(
+              class="form-label"
+            )}}
+
+            {{ updateStarForm.Y(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ updateStarForm.Z.label(
+              class="form-label"
+            )}}
+
+            {{ updateStarForm.Z(
+              class="form-control"
+            ) }}
+          </div>
+          {{ updateStarForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+
     <div class="card" style="width: 18rem; height: 23vh;">
       <div class="card-body">
         <h5 class="card-title">Remover estrela</h5>
@@ -319,17 +397,12 @@
         </form>
       </div>
     </div>
-  </div>
 
+  </div>
 </div>
 
 <div class="overview">
   <h1>Relatório</h1>
 </div>
-
-
-<!-- <div class="overview-actions">
-  <a href="" class="btn btn-primary">Editar</a>
-</div> -->
 
 {% endblock %}

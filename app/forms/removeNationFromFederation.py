@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField
+from wtforms import SubmitField, HiddenField
 
 class RemoveNationFromFederation(FlaskForm):
-    submit = SubmitField('Remover')
+    hiddenfield = HiddenField('RNFF')
+    submitRMFF = SubmitField('Remover')

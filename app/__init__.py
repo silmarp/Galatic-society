@@ -12,12 +12,18 @@ from app.forms.addFederationToNation import AddFederationToNation
 from app.forms.addDominationToNation import AddDominationToNation
 from app.forms.removeNationFromFederation import RemoveNationFromFederation
 from app.forms.createStar import CreateStar
+from app.forms.updateStar import UpdateStar
 from app.forms.deleteStar import DeleteStar
 
 from app.migrations.database import *
 from app.migrations.controllers.login import verifyLogin
 from app.migrations.controllers.changeFactionName import changeFactionName
 from app.migrations.controllers.changeFacLeader import changeFacLeader
+from app.migrations.controllers.addStar import addStar
+from app.migrations.controllers.updateStar import updateStar
+from app.migrations.controllers.deleteStar import deleteStar
+
+
 from app.migrations.controllers.deleteNationFromFederation import deleteNationFromFederation
 
 # falta testar
@@ -101,8 +107,9 @@ def overview():
     removeNationFromFactionForm = RemoveNationFromFaction()
     addFederationToNationForm = AddFederationToNation()
     addDominationToNationForm = AddDominationToNation()
-    removeNationFromFederationForm= RemoveNationFromFederation()
+    removeNationFromFederationForm = RemoveNationFromFederation()
     createStarForm = CreateStar()
+    updateStarForm = UpdateStar()
     deleteStarForm = DeleteStar()
 
     error = None # TODO: disparar um toast com o erro
@@ -112,6 +119,8 @@ def overview():
     
     # todo: fazer com try catch, verificando o erro
     if updateFactionNameForm.validate_on_submit():
+        print("UPDATE FACTION NAME FORM")
+
         ok = changeFactionName(
           userSession['user'],
           userSession['faction'],
@@ -127,6 +136,8 @@ def overview():
         return redirect(url_for('overview'))
 
     if updateLeaderFromFactionForm.validate_on_submit():
+        print("UPDATE LEADER FROM FACTION FORM")
+
         ok = changeFacLeader(
           userSession['user'],
           userSession['faction'],
@@ -141,6 +152,7 @@ def overview():
         return redirect(url_for('overview'))
     
     if addCommunityToFactionForm.validate_on_submit():
+        print("ADD COMMUNITY TO FACTION FORM")
         ok = addCommunityToFaction(
           userSession['user'],
           userSession['faction'],
@@ -156,6 +168,7 @@ def overview():
         return redirect(url_for('overview'))
     
     if removeNationFromFactionForm.validate_on_submit():
+        print("REMOVE NATION FROM FACTION FORM")
         ok = removeNationFromFaction(
           userSession['user'],
           removeNationFromFactionForm.nation.data
@@ -169,10 +182,12 @@ def overview():
         return redirect(url_for('overview'))
 
     if addFederationToNationForm.validate_on_submit():
+        print("ADD FEDERATION TO NATION FORM")
         flash('Federação credenciada com sucesso!')
         return redirect(url_for('overview'))
     
     if addDominationToNationForm.validate_on_submit():
+        print("ADD DOMINATION TO NATION FORM")
         response = addDomination(
           userSession['nation'],
           addDominationToNationForm.planet.data,
@@ -185,21 +200,67 @@ def overview():
 
         return redirect(url_for('overview'))
     
-    if removeNationFromFederationForm.validate_on_submit():
-        ok = deleteNationFromFederation(
-           userSession['user']
+    # if removeNationFromFederationForm.validate_on_submit():
+    #     print("REMOVE NATION FROM FEDERATION FORM")
+
+    #     ok = deleteNationFromFederation(
+    #        userSession['user']
+    #     )
+        
+    #     return redirect(url_for('overview'))
+    
+    if createStarForm.validate_on_submit():
+        print("CREATE STAR FORM")
+
+        ok = addStar(
+           createStarForm.id_star.data,
+            createStarForm.name.data,
+            createStarForm.classification.data,
+            createStarForm.weight.data,
+            createStarForm.X.data,
+            createStarForm.Y.data,
+            createStarForm.Z.data
         )
 
-        print("FOI REMOVIDO")
+        if ok:
+          flash('Estrela adicionada com sucesso!')
+        else:
+          flash('Erro ao adicionar estrela!')
         
         return redirect(url_for('overview'))
     
-    if createStarForm.validate_on_submit():
-        flash('Estrela adicionada com sucesso!')
+    if updateStarForm.validate_on_submit():
+        print("UPDATE STAR FORM")
+
+        ok = updateStar(
+            updateStarForm.star_id.data,
+            updateStarForm.name.data,
+            updateStarForm.classification.data,
+            updateStarForm.weight.data,
+            updateStarForm.X.data,
+            updateStarForm.Y.data,
+            updateStarForm.Z.data
+        )
+
+        if ok:
+          flash('Estrela adicionada com sucesso!')
+        else:
+          flash('Erro ao adicionar estrela!')
+
         return redirect(url_for('overview'))
     
     if deleteStarForm.validate_on_submit():
-        flash('Estrela removida com sucesso!')
+        print("DELETE STAR FORM")
+        
+        ok = deleteStar(
+            deleteStarForm.star_id.data
+        )
+
+        if ok:
+          flash('Estrela removida com sucesso!')
+        else:
+          flash('Erro ao remover estrela!')
+
         return redirect(url_for('overview'))
 
     return render_template('overview.html',
@@ -212,6 +273,7 @@ def overview():
                           addDominationToNationForm=addDominationToNationForm,
                           removeNationFromFederationForm=removeNationFromFederationForm,
                           createStarForm=createStarForm,
+                          updateStarForm=updateStarForm,
                           deleteStarForm=deleteStarForm)
 
 # Invalid URL
