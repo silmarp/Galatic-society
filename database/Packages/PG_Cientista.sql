@@ -8,7 +8,7 @@ CREATE OR REPLACE PACKAGE PG_Cientista AS
 
     -- Procedimentos de CRUD de estrelas
     PROCEDURE criar_estrela (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE,
         p_nome IN ESTRELA.NOME%TYPE,
         p_classificacao IN ESTRELA.CLASSIFICACAO%TYPE,
@@ -19,7 +19,7 @@ CREATE OR REPLACE PACKAGE PG_Cientista AS
     );
 
     PROCEDURE atualizar_estrela (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE,
         p_nome IN ESTRELA.NOME%TYPE,
         p_classificacao IN ESTRELA.CLASSIFICACAO%TYPE,
@@ -30,28 +30,28 @@ CREATE OR REPLACE PACKAGE PG_Cientista AS
     );
 
     FUNCTION ler_estrela (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE
     ) RETURN ESTRELA%ROWTYPE;
 
     PROCEDURE deletar_estrela (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE
     );
 
     -- Procedimentos para relatórios
     PROCEDURE relatorio_estrelas (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     );
 
     PROCEDURE relatorio_planetas (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     );
 
     PROCEDURE relatorio_sistemas (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     );
 
@@ -78,7 +78,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     END verificar_cientista;
 
     PROCEDURE criar_estrela (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE,
         p_nome IN ESTRELA.NOME%TYPE,
         p_classificacao IN ESTRELA.CLASSIFICACAO%TYPE,
@@ -106,7 +106,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     END criar_estrela;
 
     PROCEDURE atualizar_estrela (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE,
         p_nome IN ESTRELA.NOME%TYPE,
         p_classificacao IN ESTRELA.CLASSIFICACAO%TYPE,
@@ -140,7 +140,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     END atualizar_estrela;
 
     FUNCTION ler_estrela (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE
     ) RETURN ESTRELA%ROWTYPE IS
         v_estrela ESTRELA%ROWTYPE;
@@ -165,7 +165,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     END ler_estrela;
 
     PROCEDURE deletar_estrela (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE
     ) IS
     BEGIN
@@ -187,7 +187,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     END deletar_estrela;
 
     PROCEDURE relatorio_estrelas (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     ) IS
     BEGIN
@@ -204,7 +204,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     END relatorio_estrelas;
 
     PROCEDURE relatorio_planetas (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     ) IS
     BEGIN
@@ -221,7 +221,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     END relatorio_planetas;
 
     PROCEDURE relatorio_sistemas (
-        p_user IN LIDER.CPI%TYPE,
+        p_user USERS.ID_User%TYPE,
         p_cursor OUT SYS_REFCURSOR
     ) IS
     BEGIN
@@ -239,11 +239,6 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
 
 END PG_Cientista;
 /
-
-
-
-
-
 
 
 
