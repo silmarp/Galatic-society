@@ -1,69 +1,39 @@
 CREATE OR REPLACE PACKAGE RL_Oficial AS
 
-    PROCEDURE RELATORIO_HABITANTES_POR_FACCAO (
-        p_nacao IN VARCHAR2,
-        p_cursor OUT SYS_REFCURSOR
-    );
-
-    PROCEDURE RELATORIO_HABITANTES_POR_ESPECIE (
-        p_nacao IN VARCHAR2,
-        p_cursor OUT SYS_REFCURSOR
-    );
-
-    PROCEDURE RELATORIO_HABITANTES_POR_PLANETA (
-        p_nacao IN VARCHAR2,
-        p_cursor OUT SYS_REFCURSOR
-    );
-
-    PROCEDURE RELATORIO_HABITANTES_POR_SISTEMA (
-        p_nacao IN VARCHAR2,
-        p_cursor OUT SYS_REFCURSOR
-    );
+    FUNCTION relatorioOficial (
+        p_faccao FACCAO.NOME%TYPE,
+        p_grouping char
+    ) RETURN sys_refcursor;
 
 END RL_Oficial;
 /
 
 CREATE OR REPLACE PACKAGE BODY RL_Oficial AS
+    FUNCTION relatorioOficial ( p_faccao FACCAO.NOME%TYPE, p_grouping char ) RETURN sys_refcursor IS
+        c_report sys_refcursor;
+    BEGIN 
+        IF p_grouping = 'F' THEN	
+            OPEN c_report FOR 	
+                SELECT * FROM V_RL_OFICIAL order BY faccao;
+            
+        ELSIF p_grouping = 'E' THEN	
+            OPEN c_report FOR 
+                SELECT * FROM V_RL_OFICIAL order BY especie;
+            
+        ELSIF p_grouping = 'P' THEN	
+            OPEN c_report FOR 
+                SELECT * FROM V_RL_OFICIAL order BY planeta;
 
-    PROCEDURE RELATORIO_HABITANTES_POR_FACCAO (
-        p_nacao IN VARCHAR2,
-        p_cursor OUT SYS_REFCURSOR
-    ) IS
-    BEGIN
-        OPEN p_cursor FOR
-            SELECT FACCAO, TOTAL_PLANETAS, TOTAL_HABITANTES
-            FROM V_HABITANTES_POR_FACCAO;
-    END RELATORIO_HABITANTES_POR_FACCAO;
+        ELSIF p_grouping = 'S' THEN	
+            OPEN c_report FOR 
+                SELECT * FROM V_RL_OFICIAL order BY estrela;
 
-    PROCEDURE RELATORIO_HABITANTES_POR_ESPECIE (
-        p_nacao IN VARCHAR2,
-        p_cursor OUT SYS_REFCURSOR
-    ) IS
-    BEGIN
-        OPEN p_cursor FOR
-            SELECT ESPECIE, TOTAL_PLANETAS, TOTAL_HABITANTES
-            FROM V_HABITANTES_POR_ESPECIE;
-    END RELATORIO_HABITANTES_POR_ESPECIE;
+        ELSE
+            OPEN c_report FOR 
+                    
+        END IF;
+        RETURN c_report;
 
-    PROCEDURE RELATORIO_HABITANTES_POR_PLANETA (
-        p_nacao IN VARCHAR2,
-        p_cursor OUT SYS_REFCURSOR
-    ) IS
-    BEGIN
-        OPEN p_cursor FOR
-            SELECT PLANETA, TOTAL_HABITANTES
-            FROM V_HABITANTES_POR_PLANETA;
-    END RELATORIO_HABITANTES_POR_PLANETA;
-
-    PROCEDURE RELATORIO_HABITANTES_POR_SISTEMA (
-        p_nacao IN VARCHAR2,
-        p_cursor OUT SYS_REFCURSOR
-    ) IS
-    BEGIN
-        OPEN p_cursor FOR
-            SELECT SISTEMA, TOTAL_PLANETAS, TOTAL_HABITANTES
-            FROM V_HABITANTES_POR_SISTEMA;
-    END RELATORIO_HABITANTES_POR_SISTEMA;
-
+    END relatorioOficial;
 END RL_Oficial;
 /
