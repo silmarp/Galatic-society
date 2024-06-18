@@ -27,15 +27,9 @@ CREATE OR REPLACE PACKAGE PG_Cientista AS
         p_z IN ESTRELA.Z%TYPE
     );
 
-    PROCEDURE ler_estrela (
-        p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE,
-        p_nome IN OUT ESTRELA.NOME%TYPE,
-        p_classificacao IN OUT ESTRELA.CLASSIFICACAO%TYPE,
-        p_massa IN OUT ESTRELA.MASSA%TYPE,
-        p_x IN OUT ESTRELA.X%TYPE,
-        p_y IN OUT ESTRELA.Y%TYPE,
-        p_z IN OUT ESTRELA.Z%TYPE
-    );
+    FUNCTION ler_estrela (
+        p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE
+    ) RETURN ESTRELA%ROWTYPE;
 
     PROCEDURE deletar_estrela (
         p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE
@@ -139,28 +133,21 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
             RAISE_APPLICATION_ERROR(-20007, 'Erro ao atualizar estrela: ' || SQLERRM);
     END atualizar_estrela;
 
-    PROCEDURE ler_estrela (
-        p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE,
-        p_nome IN OUT ESTRELA.NOME%TYPE,
-        p_classificacao IN OUT ESTRELA.CLASSIFICACAO%TYPE,
-        p_massa IN OUT ESTRELA.MASSA%TYPE,
-        p_x IN OUT ESTRELA.X%TYPE,
-        p_y IN OUT ESTRELA.Y%TYPE,
-        p_z IN OUT ESTRELA.Z%TYPE
-    ) IS
+    FUNCTION ler_estrela (
+        p_id_estrela IN ESTRELA.ID_ESTRELA%TYPE
+    ) RETURN ESTRELA%ROWTYPE IS
+        v_estrela ESTRELA%ROWTYPE;
     BEGIN
         -- Verifica se o usuário é um cientista
         verificar_cientista(USER);
 
         -- Obtém os dados da estrela
-        SELECT NOME, CLASSIFICACAO, MASSA, X, Y, Z
-        INTO p_nome, p_classificacao, p_massa, p_x, p_y, p_z
+        SELECT *
+        INTO v_estrela
         FROM ESTRELA
         WHERE ID_ESTRELA = p_id_estrela;
 
-        IF p_nome IS NULL THEN
-            RAISE_APPLICATION_ERROR(-20008, 'Estrela não encontrada.');
-        END IF;
+        RETURN v_estrela;
     EXCEPTION
         WHEN e_not_cientista THEN
             RAISE_APPLICATION_ERROR(-20001, 'Apenas cientistas podem ler estrelas.');
@@ -244,6 +231,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
 
 END PG_Cientista;
 /
+
 
 
 
