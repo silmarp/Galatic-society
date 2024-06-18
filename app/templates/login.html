@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Login
+{% endblock %}
+
+{% block content %}
+
+<div class="pag-login">
+  <h1>Faça o login</h1>
+  <div class="login-form">
+    <form method="POST">
+  
+      {{ form.hidden_tag() }}
+  
+      <div class="mb-3">
+        {{ form.id.label(
+          class="form-label"
+        )}}
+        
+        {{ form.id(
+          class="form-control"
+        ) }}
+  
+      </div>
+      <div class="mb-3">
+        {{ form.password.label(
+          class="form-label"
+        ) }}
+  
+        {{ form.password(
+          class="form-control"
+        ) }}
+      </div>
+  
+      {{ form.submit(
+        class="btn btn-primary"
+      ) }}
+  
+      {% if error %}
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+      {% endif %}
+  
+    </form>
+  
+  </div>
+</div>
+
+
+{% endblock %}

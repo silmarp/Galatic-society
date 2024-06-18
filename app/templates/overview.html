@@ -1,0 +1,408 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Overview
+{% endblock %}
+
+{% block content %}
+
+<div class="overview-infos">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">CPI</th>
+        <td>{{userSession['cpi']}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Nome</th>
+        <td>{{userSession['name']}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Cargo</th>
+        <td colspan="2">{{userSession['position']}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Nação</th>
+        <td colspan="2">{{userSession['nation']}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Facção</th>
+        <td colspan="2">{{userSession['faction']}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Espécie</th>
+        <td colspan="2">{{userSession['species']}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+{% if userSession['faction'] != 'Você não é líder de facção' %}
+
+<div class="overview">
+  <h1>Gerir Facção</h1>
+
+  <div class="card-container">
+
+    <div class="card" style="width: 18rem; height: 20vh;">
+      <div class="card-body">
+        <h5 class="card-title">Alterar nome da Facção</h5>
+        <form method="POST">
+          {{ updateFactionNameForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ updateFactionNameForm.faction(
+              class="form-control",
+              placeholder="Novo nome..."
+            ) }}
+          </div>
+          {{ updateFactionNameForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+  
+    <div class="card" style="width: 18rem; height: 20vh;">
+      <div class="card-body">
+        <h5 class="card-title">Indicar novo líder</h5>
+        <form method="POST">
+          {{ updateLeaderFromFactionForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ updateLeaderFromFactionForm.leader(
+              class="form-control",
+              placeholder="Novo líder..."
+            ) }}
+          </div>
+          {{ updateLeaderFromFactionForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+  
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Credenciar comunidade</h5>
+        <form method="POST">
+          {{ addCommunityToFactionForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ addCommunityToFactionForm.species(
+              class="form-control",
+              placeholder="Nome da espécie..."
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ addCommunityToFactionForm.community(
+              class="form-control",
+              placeholder="Nome da comunidade..."
+            ) }}
+          </div>
+          {{ addCommunityToFactionForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+
+    <div class="card" style="width: 18rem; height: 20vh;">
+      <div class="card-body">
+        <h5 class="card-title">Remover nação</h5>
+        <form method="POST">
+          {{ removeNationFromFactionForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ removeNationFromFactionForm.nation(
+              class="form-control",
+              placeholder="Nome da nação..."
+            ) }}
+          </div>
+          {{ removeNationFromFactionForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endif %}
+
+<div class="overview">
+  <h1>Gerir Nação</h1>
+
+  <div class="card-container">
+
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Incluir nação em uma federação</h5>
+        <p class="card-text">Caso a federação nao exista, será criada.</p>
+        <form method="POST">
+          {{ addFederationToNationForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ addFederationToNationForm.federation(
+              class="form-control",
+              placeholder="Nome da federação..."
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ addFederationToNationForm.date.label(
+              class="form-label"
+            )}}
+            {{ addFederationToNationForm.date(
+              class="form-control",
+              placeholder="Novo nome..."
+            ) }}
+          </div>
+          {{ addFederationToNationForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+  
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Dominar planeta</h5>
+        <form method="POST">
+          {{ addDominationToNationForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ addDominationToNationForm.planet(
+              class="form-control",
+              placeholder="Nome do planeta..."
+            ) }}
+          </div>
+
+          <div class="mb-3">
+            {{ addDominationToNationForm.start_date.label(
+              class="form-label"
+            )}}
+            
+            {{ addDominationToNationForm.start_date(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ addDominationToNationForm.end_date.label(
+              class="form-label"
+            )}}
+
+            {{ addDominationToNationForm.end_date(
+              class="form-control"
+            ) }}
+          </div>
+          
+          {{ addDominationToNationForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+
+    <!-- <div class="card" style="width: 18rem; height: 23vh;">
+      <div class="card-body">
+        <h5 class="card-title">Excluir nação da federação </h5>
+        <p class="card-text">Ao confirmar, a operação não poderá ser desfeita!</p>
+        <form method="POST">
+          {{ removeNationFromFederationForm.hidden_tag() }}
+          
+          {{ removeNationFromFederationForm.submitRMFF(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div> -->
+    
+  </div>
+</div>
+
+
+<div class="overview">
+  <h1>Gerenciar estrelas</h1>
+  <div class="card-container">
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Adicionar estrela</h5>
+        <form method="POST">
+          {{ createStarForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ createStarForm.id_star.label(
+              class="form-label"
+            )}}
+            {{ createStarForm.id_star(
+              class="form-control",
+              placeholder="Id da estrela..."
+            ) }}
+          </div>
+
+          <div class="mb-3">
+            {{ createStarForm.name.label(
+              class="form-label"
+            )}}
+            
+            {{ createStarForm.name(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ createStarForm.classification.label(
+              class="form-label"
+            )}}
+
+            {{ createStarForm.classification(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ createStarForm.weight.label(
+              class="form-label"
+            )}}
+
+            {{ createStarForm.weight(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ createStarForm.X.label(
+              class="form-label"
+            )}}
+
+            {{ createStarForm.X(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ createStarForm.Y.label(
+              class="form-label"
+            )}}
+
+            {{ createStarForm.Y(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ createStarForm.Z.label(
+              class="form-label"
+            )}}
+
+            {{ createStarForm.Z(
+              class="form-control"
+            ) }}
+          </div>
+          {{ createStarForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Atualizar estrela</h5>
+        <form method="POST">
+          {{ updateStarForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ updateStarForm.star_id.label(
+              class="form-label"
+            )}}
+            {{ updateStarForm.star_id(
+              class="form-control",
+              placeholder="Id da estrela..."
+            ) }}
+          </div>
+
+          <div class="mb-3">
+            {{ updateStarForm.name.label(
+              class="form-label"
+            )}}
+            
+            {{ updateStarForm.name(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ updateStarForm.classification.label(
+              class="form-label"
+            )}}
+
+            {{ updateStarForm.classification(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ updateStarForm.weight.label(
+              class="form-label"
+            )}}
+
+            {{ updateStarForm.weight(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ updateStarForm.X.label(
+              class="form-label"
+            )}}
+
+            {{ updateStarForm.X(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ updateStarForm.Y.label(
+              class="form-label"
+            )}}
+
+            {{ updateStarForm.Y(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ updateStarForm.Z.label(
+              class="form-label"
+            )}}
+
+            {{ updateStarForm.Z(
+              class="form-control"
+            ) }}
+          </div>
+          {{ updateStarForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+
+    <div class="card" style="width: 18rem; height: 23vh;">
+      <div class="card-body">
+        <h5 class="card-title">Remover estrela</h5>
+        <form method="POST">
+          {{ deleteStarForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ deleteStarForm.star_id.label(
+              class="form-label"
+            )}}
+            {{ deleteStarForm.star_id(
+              class="form-control",
+              placeholder="Id da estrela..."
+            ) }}
+          </div>
+          {{ deleteStarForm.submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="overview">
+  <h1>Relatório</h1>
+</div>
+
+{% endblock %}

@@ -20,6 +20,13 @@
               python311Packages.virtualenv
 
               python311Packages.flask
+<<<<<<< Updated upstream
+              python311Packages.oracledb
+=======
+              python311Packages.flask-wtf
+              python311Packages.oracledb
+              python311Packages.python-dotenv
+>>>>>>> Stashed changes
 
               nodePackages.pyright
               vscode-langservers-extracted

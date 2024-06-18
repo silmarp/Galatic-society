@@ -1,0 +1,67 @@
+html, body {
+  height: 100vh;
+  margin: 0;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.flex-fill {
+  flex: 1 0 auto;
+}
+
+footer {
+  flex-shrink: 0;
+}
+
+.pag-login h1 {
+  margin-top: 4vh;
+  text-align: center;
+}
+
+.login-form {
+  margin-top: 4vh;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overview-infos {
+  padding-left: 10%;
+  padding-right: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.overview h1 {
+  text-align: center;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+}
+
+.card {
+  margin-bottom: 2vh;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+}
+
+.logout-btn {
+  margin-top: 2vh;
+  display: flex;
+  justify-content: center;
+}
