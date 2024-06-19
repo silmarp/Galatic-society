@@ -65,3 +65,9 @@ footer {
   display: flex;
   justify-content: center;
 }
+
+.report h1 {
+  text-align: center;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+}

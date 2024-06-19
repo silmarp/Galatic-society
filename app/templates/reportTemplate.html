@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ reportType }}
+{% endblock %}
+
+{% block content %}
+
+<div class="report">
+  <h1> {{ reportType }}</h1>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        {% if reportType == 'RELATORIO_DOMINANCIA_PLANETAS' or
+              reportType == 'RELATORIO_PLANETAS_DOMINADOS' or
+              reportType == 'RELATORIO_PLANETAS_NAO_DOMINADOS'%}
+          <th scope="col">Planeta</th>
+          <th scope="col">Nação Dominante</th>
+          <th scope="col">Inicio Dominacao</th>
+          <th scope="col">Fim Dominacao</th>
+          <th scope="col">Qtd Comunidades</th>
+          <th scope="col">Espécies Presentes</th>
+          <th scope="col">Total Habitantes</th>
+          <th scope="col">Facções Presentes</th>
+          <th scope="col">Facção Majoritária</th>
+        {% endif %}
+
+        {% if reportType == 'RELATORIO_LIDER'%}
+          <th scope="col">Facção</th>
+          <th scope="col">Comunidade</th>
+          <th scope="col">Espécie</th>
+          <th scope="col">Planeta</th>
+          <th scope="col">Data Inicio</th>
+          <th scope="col">Data Fim</th>
+          <th scope="col">Nação</th>
+          <th scope="col">Estrela</th>
+          <th scope="col">Sistema</th>
+        {% endif %}
+
+        {% if reportType == 'RELATORIO_SISTEMAS'%}
+          <th scope="col">Sistema</th>
+          <th scope="col">ID_Estrela</th>
+          <th scope="col">Estrela</th>
+          <th scope="col">Classificacao</th>
+          <th scope="col">Massa</th>
+          <th scope="col">X</th>
+          <th scope="col">Y</th>
+          <th scope="col">Z</th>
+        {% endif %}
+
+        {% if reportType == 'RELATORIO_PLANETAS'%}
+          <th scope="col">Planeta</th>
+          <th scope="col">Massa</th>
+          <th scope="col">Raio</th>
+          <th scope="col">Classificacao</th>
+        {% endif %}
+
+        {% if reportType == 'RELATORIO_ESTRELAS'%}
+          <th scope="col">ID_Estrela</th>
+          <th scope="col">Estrela</th>
+          <th scope="col">Classificacao</th>
+          <th scope="col">Massa</th>
+          <th scope="col">X</th>
+          <th scope="col">Y</th>
+          <th scope="col">Z</th>
+        {% endif %}
+
+        {% if reportType == 'RELATORIO_OFICIAL'%}
+          <th scope="col">Nação</th>
+          <th scope="col">Facção</th>
+          <th scope="col">Comunidade</th>
+          <th scope="col">Espécie</th>
+          <th scope="col">QTD_Habitantes</th>
+          <th scope="col">Planeta</th>
+          <th scope="col">Data Início</th>
+          <th scope="col">Data Fim</th>
+          <th scope="col">Estrela</th>
+          <th scope="col">Sistema</th>
+        {% endif %}
+
+      </tr>
+    </thead>
+    <tbody>
+      {% if data != None %}
+        {% for row in data %}
+          <tr>
+            {% for cell in row %}
+              <td>{{ cell }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

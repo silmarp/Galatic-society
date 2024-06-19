@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Relatórios
+{% endblock %}
+
+{% block content %}
+
+  {% if userSession['faction'] != 'Você não é líder de facção' %}
+    <div class="overview">
+      <h1>Relatórios do Lider</h1>
+      <div class="card-container">
+      
+        <div class="card" style="width: 18rem; height: 20vh;">
+          <div class="card-body">
+            <h5 class="card-title">Relatório Geral</h5>
+            <p class="card-text">Acesse as informações sobre comunidades da sua facção</p>
+            <a href="/report/RELATORIO_LIDER" class="btn btn-primary">Visualizar</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  {% endif %}
+
+  {% if userSession['position'] == 'COMANDANTE' %}
+    <div class="overview">
+      <h1>Relatórios do Comandante</h1>
+      <div class="card-container">
+      
+        <div class="card" style="width: 18rem; height: 20vh;">
+          <div class="card-body">
+            <h5 class="card-title">Dominância Planetas</h5>
+            <p class="card-text">Informações de dominância em todos os planetas</p>
+            <a href="/report/RELATORIO_DOMINANCIA_PLANETAS" class="btn btn-primary">Visualizar</a>
+          </div>
+        </div>
+
+        <div class="card" style="width: 18rem; height: 20vh;">
+          <div class="card-body">
+            <h5 class="card-title">Planetas Dominados</h5>
+            <p class="card-text">Informações de dominância nos planetas dominados</p>
+            <a href="/report/RELATORIO_PLANETAS_DOMINADOS" class="btn btn-primary">Visualizar</a>
+          </div>
+        </div>
+
+        <div class="card" style="width: 18rem; height: 20vh;">
+          <div class="card-body">
+            <h5 class="card-title">Planetas Não Dominados</h5>
+            <p class="card-text">Informações de dominância nos planetas não dominados</p>
+            <a href="/report/RELATORIO_PLANETAS_NAO_DOMINADOS" class="btn btn-primary">Visualizar</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  {% endif %}
+
+  {% if userSession['position'] == 'OFICIAL' %}
+    <div class="overview">
+      <h1>Relatórios do Oficial</h1>
+      <div class="card-container">
+      
+        <div class="card" style="width: 18rem; height: 20vh;">
+          <div class="card-body">
+            <h5 class="card-title">Relatório do Oficial</h5>
+            <p class="card-text">Informações de habitantes da nação</p>
+            <a href="/report/RELATORIO_OFICIAL" class="btn btn-primary">Visualizar</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  {% endif %}
+
+  {% if userSession['position'] == 'CIENTISTA' %}
+
+    <div class="overview">
+      <h1>Relatórios do Cientista</h1>
+      <div class="card-container">
+      
+        <div class="card" style="width: 18rem; height: 20vh;">
+          <div class="card-body">
+            <h5 class="card-title">Relatório de Estrelas</h5>
+            <p class="card-text">Aqui você encontrará todas as informações das estrelas</p>
+            <a href="/report/RELATORIO_ESTRELAS" class="btn btn-primary">Visualizar</a>
+          </div>
+        </div>
+
+        <div class="card" style="width: 18rem; height: 20vh;">
+          <div class="card-body">
+            <h5 class="card-title">Relatório de Planetas</h5>
+            <p class="card-text">Aqui você encontrará todas as informações dos planetas</p>
+            <a href="/report/RELATORIO_PLANETAS" class="btn btn-primary">Visualizar</a>
+          </div>
+        </div>
+
+        <div class="card" style="width: 18rem; height: 20vh;">
+          <div class="card-body">
+            <h5 class="card-title">Relatório de Sistemas</h5>
+            <p class="card-text">Aqui você encontrará todas as informações dos sistemas</p>
+            <a href="/report/RELATORIO_SISTEMAS" class="btn btn-primary">Visualizar</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    
+  {% endif %}
+
+
+
+{% endblock %}

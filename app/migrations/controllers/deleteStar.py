@@ -1,11 +1,13 @@
 from app.migrations.database import *
 
-def deleteStar(star_id):
+def deleteStar(user, star_id):
   db = DbConnection()
 
   try:
     db.getCursor().callproc('PG_Cientista.deletar_estrela',
-                            [star_id])
+                            [user,
+                             star_id
+                             ])
 
     db.closeConnection()
 

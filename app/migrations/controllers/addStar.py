@@ -1,11 +1,12 @@
 from app.migrations.database import *
 
-def addStar(star_id, nome, classificacao, massa, x, y, z):
+def addStar(user, star_id, nome, classificacao, massa, x, y, z):
   db = DbConnection()
 
   try:
     db.getCursor().callproc('PG_Cientista.criar_estrela',
-                            [star_id,
+                            [user,
+                             star_id,
                              nome,
                              classificacao,
                              massa,
