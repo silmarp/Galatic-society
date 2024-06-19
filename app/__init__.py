@@ -14,6 +14,8 @@ from app.forms.removeNationFromFederation import RemoveNationFromFederation
 from app.forms.createStar import CreateStar
 from app.forms.updateStar import UpdateStar
 from app.forms.deleteStar import DeleteStar
+from app.forms.removeCommunityFromFaction import RemoveCommunityFromFaction
+from app.forms.getStar import GetStar
 
 from app.migrations.database import *
 from app.migrations.controllers.login import verifyLogin
@@ -22,7 +24,8 @@ from app.migrations.controllers.changeFacLeader import changeFacLeader
 from app.migrations.controllers.addStar import addStar
 from app.migrations.controllers.updateStar import updateStar
 from app.migrations.controllers.deleteStar import deleteStar
-
+from app.migrations.controllers.getStar import getStar
+from app.migrations.controllers.removeCommunityFromFaction import removeCommunityFromFaction
 
 from app.migrations.controllers.deleteNationFromFederation import deleteNationFromFederation
 
@@ -32,6 +35,16 @@ from app.migrations.controllers.removeNationFromFaction import removeNationFromF
 
 # deu pau, consertar
 from app.migrations.controllers.addDomination import addDomination
+
+# Relatórios
+from app.migrations.controllers.reports.leaderReport import leaderReport
+from app.migrations.controllers.reports.planetDominanceReport import planetDominanceReport
+from app.migrations.controllers.reports.dominatedPlanetsReport import dominatedPlanetsReport
+from app.migrations.controllers.reports.notDominatedPlanetsReport import notDominatedPlanetsReport
+from app.migrations.controllers.reports.starsReport import starsReport
+from app.migrations.controllers.reports.planetsReport import planetsReport
+from app.migrations.controllers.reports.systemsReport import systemsReport
+from app.migrations.controllers.reports.officerReport import officerReport
 
 load_dotenv()
 
@@ -70,7 +83,7 @@ def login():
       userSession['user'] = id
       userSession['cpi'] = response['CPI']
       userSession['name'] = response['NOME']
-      userSession['position'] = response['CARGO']
+      userSession['position'] = response['CARGO'].strip()
       userSession['nation'] = response['NACAO']
       userSession['species'] = response['ESPECIE']
       userSession['faction'] = response['FACCAO']
@@ -111,13 +124,15 @@ def overview():
     createStarForm = CreateStar()
     updateStarForm = UpdateStar()
     deleteStarForm = DeleteStar()
+    getStarForm = GetStar()
+    removeCommunityFromFactionForm = RemoveCommunityFromFaction()
 
-    error = None # TODO: disparar um toast com o erro
+    starData = None
+    showStarModal = False
 
     if not userSession['logged']:
         return redirect(url_for('login'))
     
-    # todo: fazer com try catch, verificando o erro
     if updateFactionNameForm.validate_on_submit():
         print("UPDATE FACTION NAME FORM")
 
@@ -155,7 +170,6 @@ def overview():
         print("ADD COMMUNITY TO FACTION FORM")
         ok = addCommunityToFaction(
           userSession['user'],
-          userSession['faction'],
           addCommunityToFactionForm.species.data,
           addCommunityToFactionForm.community.data
         )
@@ -164,6 +178,22 @@ def overview():
           flash('Comunidade adicionada com sucesso!')
         else:
           flash('Erro ao adicionar comunidade!')
+
+        return redirect(url_for('overview'))
+    
+    if removeCommunityFromFactionForm.validate_on_submit():
+        print("REMOVE COMMUNITY FROM FACTION FORM")
+
+        ok = removeCommunityFromFaction(
+          userSession['user'],
+          removeCommunityFromFactionForm.RemoveCommunityFromFaction_species.data,
+          removeCommunityFromFactionForm.RemoveCommunityFromFaction_community.data
+        )
+
+        if ok:
+          flash('Comunidade removida com sucesso!')
+        else:
+          flash('Erro ao remover comunidade!')
 
         return redirect(url_for('overview'))
     
@@ -265,6 +295,24 @@ def overview():
           flash('Erro ao remover estrela!')
 
         return redirect(url_for('overview'))
+    
+    if getStarForm.validate_on_submit():
+        print("GET STAR FORM")
+        
+        starData = getStar(
+            userSession['user'],
+            getStarForm.GetStar_star_id.data
+        )
+
+        if starData is not None:
+          flash('Estrela encontrada!')
+          print(starData)
+          showStarModal = True
+
+        else:
+          flash('Estrela não encontrada!')
+
+        return redirect(url_for('overview'))
 
     return render_template('overview.html',
                           userSession=userSession,
@@ -277,7 +325,60 @@ def overview():
                           removeNationFromFederationForm=removeNationFromFederationForm,
                           createStarForm=createStarForm,
                           updateStarForm=updateStarForm,
-                          deleteStarForm=deleteStarForm)
+                          deleteStarForm=deleteStarForm,
+                          getStarForm=getStarForm,
+                          removeCommunityFromFactionForm=removeCommunityFromFactionForm,
+                          starData=starData,
+                          showStarModal=showStarModal)
+
+
+@app.route('/report', methods=['GET', 'POST'])
+def report():
+    if not userSession['logged']:
+        return redirect(url_for('login'))
+
+    return render_template('report.html', userSession=userSession)
+
+@app.route('/report/<reportType>')
+def reportCustom(reportType):
+    if not userSession['logged']:
+        return redirect(url_for('login'))
+    
+    data = None
+    
+    if reportType == 'RELATORIO_LIDER':
+        data = leaderReport(userSession['user'],
+                            userSession['faction'])
+        
+    elif reportType == 'RELATORIO_DOMINANCIA_PLANETAS':
+        data = planetDominanceReport(userSession['user'])
+
+    elif reportType == 'RELATORIO_PLANETAS_DOMINADOS':
+        data = dominatedPlanetsReport(userSession['user'])
+
+    elif reportType == 'RELATORIO_PLANETAS_NAO_DOMINADOS':
+        data = notDominatedPlanetsReport(userSession['user'])
+
+    elif reportType == 'RELATORIO_ESTRELAS':
+        data = starsReport(userSession['user'])
+
+    elif reportType == 'RELATORIO_PLANETAS':
+        data = planetsReport(userSession['user'])
+
+    elif reportType == 'RELATORIO_SISTEMAS':
+        data = systemsReport(userSession['user'])
+
+    elif reportType == 'RELATORIO_OFICIAL':
+        data = officerReport(userSession['user'],
+                             userSession['nation'])
+        
+    if data is None:
+        flash('Erro ao gerar relatório!')
+
+    return render_template('reportTemplate.html',
+                           userSession=userSession,
+                           reportType=reportType,
+                           data=data)
 
 # Invalid URL
 @app.errorhandler(404)

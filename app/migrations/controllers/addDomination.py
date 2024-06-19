@@ -2,8 +2,6 @@ from app.migrations.database import *
 
 def addDomination(nation, planet, start_date, end_date=None):
   db = DbConnection()
-
-  print("ENTROU NO ADD DOMINATION")
   
   try:
     if (end_date == None):
@@ -12,8 +10,6 @@ def addDomination(nation, planet, start_date, end_date=None):
       db.getCursor().callproc('PG_COMANDANTE.add_domination', [nation, planet, start_date, end_date])
 
     db.closeConnection()
-
-    print("DEU CERTO")
 
     return True
 

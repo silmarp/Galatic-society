@@ -1,10 +1,10 @@
 from app.migrations.database import *
 
-def addCommunityToFaction(user, faction, species, community):
+def addCommunityToFaction(user, species, community):
   db = DbConnection()
 
   try:
-    db.getCursor().callproc('PG_Lider.credenciar_comunidade', [user, faction, species, community])
+    db.getCursor().callproc('PG_Lider.insert_comunidade', [user, species, community])
 
     db.closeConnection()
 
