@@ -1,13 +1,13 @@
 from app.migrations.database import *
 
-def addDomination(nation, planet, start_date, end_date=None):
+def addDomination(user, planet, start_date, end_date=None):
   db = DbConnection()
   
   try:
-    if (end_date == None):
-      db.getCursor().callproc('PG_COMANDANTE.add_domination', [nation, planet, start_date])
+    if end_date is None:
+      db.getCursor().callproc('PG_COMANDANTE.insert_dominancia', [user, planet, start_date])
     else:
-      db.getCursor().callproc('PG_COMANDANTE.add_domination', [nation, planet, start_date, end_date])
+      db.getCursor().callproc('PG_COMANDANTE.insert_dominancia', [user, planet, start_date, end_date])
 
     db.closeConnection()
 

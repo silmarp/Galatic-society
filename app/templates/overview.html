@@ -6,31 +6,6 @@
 
 {% block content %}
 
-
-{% if showStarModal %}
-
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-{% endif %}
-
 <div class="overview-infos">
   <table class="table table-striped">
     <thead>
@@ -67,6 +42,8 @@
     </tbody>
   </table>
 </div>
+
+{% if userSession['faction'] != 'Você não é líder de facção' %}
 
 <div class="overview">
   <h1>Gerir Facção</h1>
@@ -178,97 +155,120 @@
   </div>
 </div>
 
+{% endif %}
 
-
+{% if userSession['position'] == 'COMANDANTE' %}
 
 <div class="overview">
   <h1>Gerir Nação</h1>
 
   <div class="card-container">
 
-    <div class="card" style="width: 18rem;">
+    <div class="card" style="width: 18rem; height: 23vh;">
       <div class="card-body">
         <h5 class="card-title">Incluir nação em uma federação</h5>
-        <p class="card-text">Caso a federação nao exista, será criada.</p>
         <form method="POST">
           {{ addFederationToNationForm.hidden_tag() }}
           <div class="mb-3">
-            {{ addFederationToNationForm.federation(
+            {{ addFederationToNationForm.AddFederationToNation_federation(
               class="form-control",
               placeholder="Nome da federação..."
             ) }}
           </div>
-          <div class="mb-3">
-            {{ addFederationToNationForm.date.label(
-              class="form-label"
-            )}}
-            {{ addFederationToNationForm.date(
-              class="form-control",
-              placeholder="Novo nome..."
-            ) }}
-          </div>
-          {{ addFederationToNationForm.submit(
-            class="btn btn-primary"
-          ) }}
-        </form>
-      </div>
-    </div>
-  
-    <div class="card" style="width: 18rem;">
-      <div class="card-body">
-        <h5 class="card-title">Dominar planeta</h5>
-        <form method="POST">
-          {{ addDominationToNationForm.hidden_tag() }}
-          <div class="mb-3">
-            {{ addDominationToNationForm.planet(
-              class="form-control",
-              placeholder="Nome do planeta..."
-            ) }}
-          </div>
-
-          <div class="mb-3">
-            {{ addDominationToNationForm.start_date.label(
-              class="form-label"
-            )}}
-            
-            {{ addDominationToNationForm.start_date(
-              class="form-control"
-            ) }}
-          </div>
-          <div class="mb-3">
-            {{ addDominationToNationForm.end_date.label(
-              class="form-label"
-            )}}
-
-            {{ addDominationToNationForm.end_date(
-              class="form-control"
-            ) }}
-          </div>
-          
-          {{ addDominationToNationForm.submit(
+          {{ addFederationToNationForm.AddFederationToNation_submit(
             class="btn btn-primary"
           ) }}
         </form>
       </div>
     </div>
 
-    <!-- <div class="card" style="width: 18rem; height: 23vh;">
+    <div class="card" style="width: 18rem; height: 23vh;">
       <div class="card-body">
         <h5 class="card-title">Excluir nação da federação </h5>
         <p class="card-text">Ao confirmar, a operação não poderá ser desfeita!</p>
         <form method="POST">
           {{ removeNationFromFederationForm.hidden_tag() }}
           
-          {{ removeNationFromFederationForm.submitRMFF(
+          {{ removeNationFromFederationForm.RemoveNationFromFederation_submit(
             class="btn btn-primary"
           ) }}
         </form>
       </div>
-    </div> -->
+    </div>
+
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Criar federação</h5>
+        <form method="POST">
+          {{ createFederationForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ createFederationForm.CreateFederation_federation.label(
+              class="form-label"
+            )}}
+            {{ createFederationForm.CreateFederation_federation(
+              class="form-control",
+              placeholder="Nome da federação..."
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ createFederationForm.CreateFederation_date.label(
+              class="form-label"
+            )}}
+            {{ createFederationForm.CreateFederation_date(
+              class="form-control"
+            ) }}
+          </div>
+          {{ createFederationForm.CreateFederation_submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
+
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Dominar planeta</h5>
+        <form method="POST">
+          {{ addDominationToNationForm.hidden_tag() }}
+          <div class="mb-3">
+            {{ addDominationToNationForm.AddDominationToNation_planet(
+              class="form-control",
+              placeholder="Nome do planeta..."
+            ) }}
+          </div>
+
+          <div class="mb-3">
+            {{ addDominationToNationForm.AddDominationToNation_start_date.label(
+              class="form-label"
+            )}}
+            
+            {{ addDominationToNationForm.AddDominationToNation_start_date(
+              class="form-control"
+            ) }}
+          </div>
+          <div class="mb-3">
+            {{ addDominationToNationForm.AddDominationToNation_end_date.label(
+              class="form-label"
+            )}}
+
+            {{ addDominationToNationForm.AddDominationToNation_end_date(
+              class="form-control"
+            ) }}
+          </div>
+          
+          {{ addDominationToNationForm.AddDominationToNation_submit(
+            class="btn btn-primary"
+          ) }}
+        </form>
+      </div>
+    </div>
     
   </div>
 </div>
 
+{% endif %}
+
+{% if userSession['position'] == 'CIENTISTA' %}
 
 <div class="overview">
   <h1>Gerenciar estrelas</h1>
@@ -463,12 +463,15 @@
           {{ getStarForm.GetStar_submit(
             class="btn btn-primary"
           ) }}
+          
         </form>
       </div>
     </div>
 
   </div>
 </div>
+
+{% endif %}
 
 <div class="overview">
   <h1>Relatórios</h1>

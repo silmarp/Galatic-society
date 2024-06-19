@@ -1,8 +1,9 @@
 from flask import Flask, flash
-from flask import request, redirect, url_for
+from flask import redirect, url_for
 from flask import render_template
 from dotenv import load_dotenv
 
+# Forms
 from app.forms.updateFactionName import UpdateFactionName
 from app.forms.updateLeaderFromFaction import UpdateLeaderFromFaction
 from app.forms.login import Login
@@ -16,7 +17,9 @@ from app.forms.updateStar import UpdateStar
 from app.forms.deleteStar import DeleteStar
 from app.forms.removeCommunityFromFaction import RemoveCommunityFromFaction
 from app.forms.getStar import GetStar
+from app.forms.createFederation import CreateFederation
 
+# Controllers
 from app.migrations.database import *
 from app.migrations.controllers.login import verifyLogin
 from app.migrations.controllers.changeFactionName import changeFactionName
@@ -25,15 +28,12 @@ from app.migrations.controllers.addStar import addStar
 from app.migrations.controllers.updateStar import updateStar
 from app.migrations.controllers.deleteStar import deleteStar
 from app.migrations.controllers.getStar import getStar
-from app.migrations.controllers.removeCommunityFromFaction import removeCommunityFromFaction
-
+from app.migrations.controllers.addNationToFederation import addNationToFederation
 from app.migrations.controllers.deleteNationFromFederation import deleteNationFromFederation
-
-# falta testar
+from app.migrations.controllers.createFederation import createFederation
+from app.migrations.controllers.removeCommunityFromFaction import removeCommunityFromFaction
 from app.migrations.controllers.addCommunityToFaction import addCommunityToFaction
 from app.migrations.controllers.removeNationFromFaction import removeNationFromFaction
-
-# deu pau, consertar
 from app.migrations.controllers.addDomination import addDomination
 
 # Relatórios
@@ -126,9 +126,9 @@ def overview():
     deleteStarForm = DeleteStar()
     getStarForm = GetStar()
     removeCommunityFromFactionForm = RemoveCommunityFromFaction()
+    createFederationForm = CreateFederation()
 
     starData = None
-    showStarModal = False
 
     if not userSession['logged']:
         return redirect(url_for('login'))
@@ -210,34 +210,69 @@ def overview():
           flash('Erro ao remover nação!')
 
         return redirect(url_for('overview'))
-
+    
     if addFederationToNationForm.validate_on_submit():
         print("ADD FEDERATION TO NATION FORM")
-        flash('Federação credenciada com sucesso!')
-        return redirect(url_for('overview'))
-    
-    if addDominationToNationForm.validate_on_submit():
-        print("ADD DOMINATION TO NATION FORM")
-        response = addDomination(
-          userSession['nation'],
-          addDominationToNationForm.planet.data,
-          addDominationToNationForm.start_date.data,
-          addDominationToNationForm.
-          end_date.data
+
+        ok = addNationToFederation(
+          userSession['user'],
+          addFederationToNationForm.AddFederationToNation_federation.data
         )
 
-        print(response)
+        if ok:
+          flash('Federação adicionada com sucesso!')
+        else:
+          flash('Erro ao adicionar federação!')
 
         return redirect(url_for('overview'))
     
-    # if removeNationFromFederationForm.validate_on_submit():
-    #     print("REMOVE NATION FROM FEDERATION FORM")
+    if removeNationFromFederationForm.RemoveNationFromFederation_submit.data and removeNationFromFederationForm.validate_on_submit():
+        print("REMOVE NATION FROM FEDERATION FORM")
 
-    #     ok = deleteNationFromFederation(
-    #        userSession['user']
-    #     )
+        ok = deleteNationFromFederation(
+           userSession['user']
+        )
+
+        if ok:
+          flash('Nação removida da federação com sucesso!')
+        else:
+          flash('Erro ao remover nação da federação!')
         
-    #     return redirect(url_for('overview'))
+        return redirect(url_for('overview'))
+    
+    if createFederationForm.CreateFederation_submit.data and createFederationForm.validate_on_submit():
+        print("CREATE FEDERATION FORM")
+
+        ok = createFederation(
+            userSession['user'],
+            createFederationForm.CreateFederation_federation.data,
+            createFederationForm.CreateFederation_date.data
+        )
+
+        if ok:
+          flash('Federação adicionada com sucesso!')
+        else:
+          flash('Erro ao adicionar federação!')
+        
+        return redirect(url_for('overview'))
+
+    if addDominationToNationForm.validate():
+        print("ADD DOMINATION TO NATION FORM")
+
+        ok = addDomination(
+          userSession['user'],
+          addDominationToNationForm.AddDominationToNation_planet.data,
+          addDominationToNationForm.AddDominationToNation_start_date.data,
+          addDominationToNationForm.AddDominationToNation_end_date.data
+        )
+
+        if ok:
+          flash('Dominância adicionada com sucesso!')
+        else:
+          flash('Erro ao adicionar dominância!')
+
+        return redirect(url_for('overview'))
+  
     
     if createStarForm.validate_on_submit():
         print("CREATE STAR FORM")
@@ -307,8 +342,6 @@ def overview():
         if starData is not None:
           flash('Estrela encontrada!')
           print(starData)
-          showStarModal = True
-
         else:
           flash('Estrela não encontrada!')
 
@@ -328,8 +361,7 @@ def overview():
                           deleteStarForm=deleteStarForm,
                           getStarForm=getStarForm,
                           removeCommunityFromFactionForm=removeCommunityFromFactionForm,
-                          starData=starData,
-                          showStarModal=showStarModal)
+                          createFederationForm=createFederationForm)
 
 
 @app.route('/report', methods=['GET', 'POST'])
