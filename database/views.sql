@@ -8,6 +8,7 @@ SELECT nf.NACAO, nf.FACCAO, p.COMUNIDADE, p.ESPECIE, c.QTD_HABITANTES, h.PLANETA
 	LEFT JOIN SISTEMA s ON s.ESTRELA = op.ESTRELA;
 --
 
+
 -- Views para relatorios lider
 CREATE OR REPLACE VIEW V_RL_LIDER AS 
 SELECT p.FACCAO, p.COMUNIDADE, p.ESPECIE, h.PLANETA, h.DATA_INI, h.DATA_FIM, d.NACAO, op.ESTRELA, s.NOME FROM PARTICIPA p 
@@ -17,9 +18,9 @@ SELECT p.FACCAO, p.COMUNIDADE, p.ESPECIE, h.PLANETA, h.DATA_INI, h.DATA_FIM, d.N
 	LEFT JOIN SISTEMA s ON s.ESTRELA = op.ESTRELA;
 --
 
--- Views para relatorios de comandante
 
---View para contar comunidades por planeta:
+-- Views para relatorios de comandante
+-- View para contar comunidades por planeta:
 CREATE OR REPLACE VIEW V_CONTAGEM_COMUNIDADES AS
 SELECT h2.planeta, COUNT(DISTINCT c.especie || '-' || c.nome) AS quantidade_comunidades
     FROM HABITACAO h2
@@ -55,9 +56,8 @@ SELECT
         LEFT JOIN v_contagem_comunidades cc ON p.id_astro = cc.planeta
         LEFT JOIN v_faccao_majoritaria fm ON p.id_astro = fm.planeta
 GROUP BY p.id_astro, d.nacao, d.data_ini, d.data_fim, cc.quantidade_comunidades, fm.faccao;
-
-
 --
+
 
 -- Views do líder de faccao
 CREATE OR REPLACE VIEW V_LIDER_FACCAO

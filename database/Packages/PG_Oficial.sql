@@ -5,45 +5,22 @@ CREATE OR REPLACE PACKAGE PG_Oficial AS
     e_not_oficial EXCEPTION;
     e_atrib_notnull EXCEPTION;
     PRAGMA EXCEPTION_INIT(e_atrib_notnull, -01400);
-
-    PROCEDURE verificar_oficial (
-        p_user USERS.ID_User%TYPE
-    );
     
-    FUNCTION relatorio_oficial (
-        p_user USERS.ID_User%TYPE,
-        p_faccao FACCAO.NOME%TYPE,
-        p_grouping char
-    ) RETURN sys_refcursor;
-
-
-END PG_Oficial;
-/
-
-CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
-
-    PROCEDURE verificar_oficial (
-        p_user USERS.ID_User%TYPE
-    ) IS
-        v_user LIDER%ROWTYPE;
-    BEGIN
-        v_user := PG_Users.get_user_info(p_user);
-        -- Verifica se o usuário é um oficial
-        IF v_user.CARGO != 'OFICIAL' THEN
-            RAISE_APPLICATION_ERROR(-20001, 'Usuário não é um oficial.');
-        END IF;
-    EXCEPTION
-        WHEN NO_DATA_FOUND THEN
-            RAISE_APPLICATION_ERROR(-20002, 'Nenhum usuário encontrado com o CPI fornecido.');
-        WHEN OTHERS THEN
-            RAISE_APPLICATION_ERROR(-20003, 'Erro ao verificar oficial: ' || SQLERRM);
-    END verificar_oficial;
-
     FUNCTION relatorio_oficial (
         p_user USERS.ID_User%TYPE,
         p_nacao NACAO.NOME%TYPE,
         p_grouping char
-    ) RETURN sys_refcursor IS
+    ) RETURN sys_refcursor;
+END PG_Oficial;
+/
+
+CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
+    FUNCTION relatorio_oficial (
+        p_user USERS.ID_User%TYPE,
+        p_nacao NACAO.NOME%TYPE,
+        p_grouping char
+    ) RETURN sys_refcursor
+    IS
         c_report sys_refcursor;
         v_lider Lider%ROWTYPE;
         BEGIN 
@@ -52,30 +29,22 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
     
             IF p_grouping = 'F' THEN	
                 OPEN c_report FOR 	
-                    SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao order BY faccao;
-                
+                    SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao order BY faccao;                
             ELSIF p_grouping = 'E' THEN	
                 OPEN c_report FOR 
-                    SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao order BY especie;
-                
+                    SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao order BY especie;                
             ELSIF p_grouping = 'P' THEN	
                 OPEN c_report FOR 
-                    SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao order BY planeta;
-    
+                    SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao order BY planeta;    
             ELSIF p_grouping = 'S' THEN	
                 OPEN c_report FOR 
-                    SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao order BY estrela;
-    
+                    SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao order BY estrela;    
             ELSE
                 OPEN c_report FOR
-<<<<<<< HEAD
-                    SELECT * FROM V_RL_OFICIAL;
-=======
                     SELECT * FROM V_RL_OFICIAL where NACAO = p_nacao;
-                        
->>>>>>> 3cbb7286d3e3f22cf0e3bfdf5aba0ac81659d7d5
             END IF;
             RETURN c_report;
+            
         EXCEPTION
             WHEN e_not_oficial THEN
                 RAISE_APPLICATION_ERROR(-20131, 'Usuario nao e oficial');
@@ -88,5 +57,3 @@ CREATE OR REPLACE PACKAGE BODY PG_Oficial AS
     END relatorio_oficial;
 END PG_Oficial;
 /
-
-
