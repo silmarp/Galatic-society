@@ -1,0 +1,54 @@
+drop PACKAGE RL_Cientista;
+
+-- Criação do pacote RL_Cientista
+CREATE OR REPLACE PACKAGE RL_Cientista AS
+
+    -- Cursor para Relatório de Estrelas
+    FUNCTION CURSOR_RELATORIO_ESTRELAS RETURN SYS_REFCURSOR;
+
+    -- Cursor para Relatório de Planetas
+    FUNCTION CURSOR_RELATORIO_PLANETAS RETURN SYS_REFCURSOR;
+
+    -- Cursor para Relatório de Sistemas
+    FUNCTION CURSOR_RELATORIO_SISTEMAS RETURN SYS_REFCURSOR;
+
+END RL_Cientista;
+/
+
+-- Corpo do pacote RL_Cientista
+CREATE OR REPLACE PACKAGE BODY RL_Cientista AS
+
+    -- Cursor para Relatório de Estrelas
+    FUNCTION CURSOR_RELATORIO_ESTRELAS RETURN SYS_REFCURSOR IS
+        cur SYS_REFCURSOR;
+    BEGIN
+        OPEN cur FOR
+            SELECT ID_ESTRELA, NOME, CLASSIFICACAO, MASSA, X, Y, Z
+            FROM ESTRELA;
+        RETURN cur;
+    END CURSOR_RELATORIO_ESTRELAS;
+
+    -- Cursor para Relatório de Planetas
+    FUNCTION CURSOR_RELATORIO_PLANETAS RETURN SYS_REFCURSOR IS
+        cur SYS_REFCURSOR;
+    BEGIN
+        OPEN cur FOR
+            SELECT ID_ASTRO, MASSA, RAIO, CLASSIFICACAO
+            FROM PLANETA;
+        RETURN cur;
+    END CURSOR_RELATORIO_PLANETAS;
+
+    -- Cursor para Relatório de Sistemas
+    FUNCTION CURSOR_RELATORIO_SISTEMAS RETURN SYS_REFCURSOR IS
+        cur SYS_REFCURSOR;
+    BEGIN
+        OPEN cur FOR
+            SELECT S.NOME AS SISTEMA, E.ID_ESTRELA, E.NOME AS NOME_ESTRELA, E.CLASSIFICACAO, E.MASSA, E.X, E.Y, E.Z
+            FROM SISTEMA S
+            JOIN ORBITA_ESTRELA OE ON S.ESTRELA = OE.ORBITADA
+            JOIN ESTRELA E ON OE.ORBITANTE = E.ID_ESTRELA;
+        RETURN cur;
+    END CURSOR_RELATORIO_SISTEMAS;
+
+END RL_Cientista;
+/
