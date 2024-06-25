@@ -83,6 +83,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
         BEGIN
             v_lider := PG_Users.get_user_info(p_user);
             IF v_lider.cargo != 'CIENTISTA' THEN RAISE e_not_cientista; END IF;
+            PG_Users.set_user_id(p_user);
     
             INSERT INTO ESTRELA (ID_ESTRELA, NOME, CLASSIFICACAO, MASSA, X, Y, Z)
                 VALUES (p_id_estrela, p_nome, p_classificacao, p_massa, p_x, p_y, p_z);
@@ -111,6 +112,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
         BEGIN
             v_lider := PG_Users.get_user_info(p_user);
             IF v_lider.cargo != 'CIENTISTA' THEN RAISE e_not_cientista; END IF;
+            PG_Users.set_user_id(p_user);
 
             UPDATE ESTRELA
             SET NOME = p_nome,
@@ -158,6 +160,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Cientista AS
     ) IS
         BEGIN
             verificar_cientista(p_user);
+            PG_Users.set_user_id(p_user);
     
             DELETE FROM ESTRELA WHERE ID_ESTRELA = p_id_estrela;
             COMMIT;

@@ -70,6 +70,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Lider AS
     
             SELECT COUNT(*) INTO v_count FROM FACCAO WHERE LIDER = v_lider_faccao.lider AND NOME = p_nome_faccao_atual;  
             IF v_count = 0 THEN RAISE e_not_lider; END IF;
+            PG_Users.set_user_id(p_user);
     
             BEGIN
                 EXECUTE IMMEDIATE 'ALTER TABLE NACAO_FACCAO DISABLE CONSTRAINT FK_NF_FACCAO';
@@ -123,6 +124,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Lider AS
             IF v_count = 0 THEN
                 RAISE_APPLICATION_ERROR(-20122, 'Novo lider nao encontrado');
             END IF;
+            PG_Users.set_user_id(p_user);
     
             BEGIN
                 UPDATE FACCAO SET LIDER = p_novo_lider_cpi WHERE NOME = p_nome_faccao;
@@ -158,6 +160,8 @@ CREATE OR REPLACE PACKAGE BODY PG_Lider AS
                 FROM V_LIDER_FACCAO
                 WHERE LIDER = v_lider_faccao.lider AND COM_ESPECIE = p_com_especie AND COM_NOME = p_com_nome
                 FETCH FIRST 1 ROWS ONLY;
+            PG_Users.set_user_id(p_user);
+
             INSERT INTO V_LIDER_FACCAO (FACCAO, COM_ESPECIE, COM_NOME)
                 VALUES (v_lider_faccao.nome, p_com_especie, p_com_nome);
             COMMIT;
@@ -195,6 +199,8 @@ CREATE OR REPLACE PACKAGE BODY PG_Lider AS
             FROM V_LIDER_FACCAO
             WHERE PARTICIPA = v_lider_faccao.nome
             FETCH FIRST 1 ROWS ONLY;
+        PG_Users.set_user_id(p_user);
+
         DELETE FROM V_LIDER_FACCAO WHERE
             FACCAO = v_lider_faccao.nome AND
             COM_ESPECIE = p_com_especie AND
@@ -220,6 +226,7 @@ CREATE OR REPLACE PACKAGE BODY PG_Lider AS
         BEGIN
             v_lider_faccao := is_lider(p_user);
             IF v_lider_faccao.lider IS NULL THEN RAISE e_not_lider; END IF;
+            PG_Users.set_user_id(p_user);
             
             BEGIN
                 DELETE FROM NACAO_FACCAO WHERE FACCAO = v_lider_faccao.nome AND NACAO = p_nacao;
