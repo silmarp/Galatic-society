@@ -54,6 +54,8 @@ CREATE OR REPLACE PACKAGE BODY PG_Comandante AS
         BEGIN
             v_lider := PG_Users.get_user_info(p_user);
             IF v_lider.cargo != 'COMANDANTE' THEN RAISE e_not_comandante; END IF;
+            PG_Users.set_user_id(p_user);
+
             UPDATE NACAO N SET FEDERACAO = p_federacao_nome WHERE N.NOME = v_lider.nacao;
             COMMIT;    
 
@@ -77,6 +79,8 @@ CREATE OR REPLACE PACKAGE BODY PG_Comandante AS
         BEGIN
             v_lider := PG_Users.get_user_info(p_user);
             IF v_lider.cargo != 'COMANDANTE' THEN RAISE e_not_comandante; END IF;
+            PG_Users.set_user_id(p_user);
+
             UPDATE NACAO N SET FEDERACAO = NULL WHERE N.NOME = v_lider.nacao;
             COMMIT;    
 
@@ -100,6 +104,8 @@ CREATE OR REPLACE PACKAGE BODY PG_Comandante AS
         BEGIN
             v_lider := PG_Users.get_user_info(p_user);
             IF v_lider.cargo != 'COMANDANTE' THEN RAISE e_not_comandante; END IF;
+            PG_Users.set_user_id(p_user);
+
             INSERT INTO FEDERACAO VALUES (p_federacao_nome, p_federacao_dt_fund);
             UPDATE NACAO N SET FEDERACAO = p_federacao_nome WHERE N.NOME = v_lider.nacao;
             COMMIT;
@@ -128,11 +134,13 @@ CREATE OR REPLACE PACKAGE BODY PG_Comandante AS
         BEGIN
             v_lider := PG_Users.get_user_info(p_user);
             IF v_lider.cargo != 'COMANDANTE' THEN RAISE e_not_comandante; END IF;
+            PG_Users.set_user_id(p_user);
+
             SELECT COUNT(*)
-            INTO v_count
-            FROM DOMINANCIA D
-            WHERE D.PLANETA = p_dominancia_planeta
-                AND D.DATA_FIM IS NULL;
+                INTO v_count
+                FROM DOMINANCIA D
+                WHERE D.PLANETA = p_dominancia_planeta
+                    AND D.DATA_FIM IS NULL;
             IF v_count != 0
                 THEN RAISE e_not_valid_planeta;
             ELSE
